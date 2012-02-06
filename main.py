@@ -1,4 +1,5 @@
 import modulemanager
+import config as cfg
 
 class Brunobot():
 
@@ -11,6 +12,6 @@ class Brunobot():
         self.communication = self.modules.core('communication')
         self.parser = self.modules.core('parser')
 
-        self.connection.connect('efnet.port80.se', 6667)
+        self.connection.connect(cfg.server, cfg.port)
 
 brunobot = Brunobot()

@@ -1,23 +1,35 @@
+import config as cfg
 import sys
 class ModuleManager():
     
     def __init__(self):
         sys.path.append('module/core')
-        sys.path.append('module/extra')
-        sys.path.append('module/plugin')
+        #sys.path.append('module/extra')
+        #sys.path.append('module/plugin')
         self.mcore = {}
         self.mextra = []
         self.mplugin = []
         
         self.loadCore()
 
-        import typofixer
-        typofixer.communication = self.mcore['communication']
-        typofixer.recentdata = self.mcore['recentdata']
-        self.mextra.append(typofixer)
+        import loadmodule
+        self.moduleLoader = loadmodule.ModuleLoader(self)
 
-    def loadModule(self):
-        '''yet to be implemented'''
+        for module in cfg.modules_extra:
+            self.loadModule(module)
+
+        #import typofixer
+        #typofixer.communication = self.mcore['communication']
+        #typofixer.recentdata = self.mcore['recentdata']
+        #self.mextra.append(typofixer)
+
+    def loadModule(self,name):
+        module = self.moduleLoader.load(name)
+        if (type(module) is not str):
+            print module
+            self.mextra.append(module)
+        else:
+            print "!!!! Error loading module:" + module
 
     def loadCore(self):
         import communication
@@ -25,9 +37,9 @@ class ModuleManager():
         import connection
         import recentdata
         self.mcore['connection'] = connection.Connection(
-                'botvzbrun',
-                'botvz',
-                'brunobot')
+                cfg.nick,
+                cfg.ident,
+                cfg.name)
 
         self.mcore['communication'] = communication.Communication(self.mcore['connection'])
         self.mcore['recentdata'] = recentdata.Data()
