@@ -1,8 +1,22 @@
 import config as cfg
 import sys
+import inspect
 class ModuleManager():
+    '''
+    The ModuleManager manages the core modules
+    such as communication and connection, as well
+    as the user defined modules located in module/extra.
     
+    It contains information about which modules that
+    are loaded.
+    '''
+
     def __init__(self):
+        '''
+        Load the core modules, as well as the user defined
+        extra modules defined in the config file (config.py).
+        '''
+
         sys.path.append('module/core')
         self.mcore = {}
         self.mextra = []
@@ -19,14 +33,25 @@ class ModuleManager():
 
 
     def loadModule(self,name):
+        '''
+        Load a module using the module loader. 
+        '''
+
         module = self.moduleLoader.load(name)
-        if (type(module) is not str):
+        if (inspect.ismodule(module)):
             print module
             self.mextra.append(module)
         else:
             print "!!!! Error loading module:" + module
 
+
     def loadCore(self):
+        '''
+        Load the core modules required for the bot,
+        and passing referances to the core modules
+        required for initializing them. 
+        '''
+
         import communication
         import cparser as parser
         import connection
@@ -40,7 +65,13 @@ class ModuleManager():
         self.mcore['recentdata'] = recentdata.Data()
         self.mcore['parser'] = parser.Parser(self)
 
+
     def listening(self, keyword):
+        '''
+        Return: a list of modules that listens to
+        a given keyword.
+        '''
+
         modules = []
         for module in self.mextra:
             for k in module.listen:
@@ -51,14 +82,30 @@ class ModuleManager():
 
 
     def coreModules(self):
+        '''
+        TODO: Remove this
+        '''
+
         return self.mcore
 
     def core(self,name):
+        ''' 
+        Checking for name in core, i.e:
+        that a core module with the name 
+        'name' is loaded.
+        '''
+
         print self.mcore[name]
         try: return self.mcore[name]
         except: return None
     
     def extra(self,name):
+        ''' 
+        Checking for name in extra, i.e:
+        that an extra module with the name 
+        'name' is loaded.
+        '''
+
         for mod in self.mextra:
             if mod.name == name:
                 return mod
