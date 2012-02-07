@@ -4,8 +4,6 @@ class ModuleManager():
     
     def __init__(self):
         sys.path.append('module/core')
-        #sys.path.append('module/extra')
-        #sys.path.append('module/plugin')
         self.mcore = {}
         self.mextra = []
         self.mplugin = []
@@ -14,14 +12,11 @@ class ModuleManager():
 
         import loadmodule
         self.moduleLoader = loadmodule.ModuleLoader(self)
+        self.dynamicLoader = loadmodule.DynamicLoad(self.moduleLoader)
 
         for module in cfg.modules_extra:
             self.loadModule(module)
 
-        #import typofixer
-        #typofixer.communication = self.mcore['communication']
-        #typofixer.recentdata = self.mcore['recentdata']
-        #self.mextra.append(typofixer)
 
     def loadModule(self,name):
         module = self.moduleLoader.load(name)
@@ -54,6 +49,7 @@ class ModuleManager():
 
         return modules
 
+
     def coreModules(self):
         return self.mcore
 
@@ -62,9 +58,12 @@ class ModuleManager():
         try: return self.mcore[name]
         except: return None
     
-#    def extra(self,name):
-#        try: return self.mextra[name]
-#        except: return None
+    def extra(self,name):
+        for mod in self.mextra:
+            if mod.name == name:
+                return mod
+        return None
+
 #    
 #    def plugin(self,name):
 #        try: return self.mplugin[name]

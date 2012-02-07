@@ -51,11 +51,11 @@ def main(data):
     is done by the core-parser (cparser) on privmsg and
     channel activities as definde by the listen list.
     '''
-    nick = data[0]
-    ident = data[1]
-    host = data[2]
-    channel = data[3]
-    message = data[4]
+    nick = data['nick']
+    ident = data['ident']
+    host = data['host']
+    channel = data['channel']
+    message = data['msg']
 
     correct = False
     # Ensuring that the message to correct is long enough

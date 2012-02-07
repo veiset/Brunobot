@@ -16,4 +16,7 @@ modules_extra = ['typofixer']
 modules_plugin = []
 
 
+command_prefix = "."
+
+
 
