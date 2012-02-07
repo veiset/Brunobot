@@ -5,6 +5,7 @@ nick   = 'botvzbrun'
 ident  = 'botvz'
 name   = 'brunobot'
 server = 'efnet.port80.se'
+#server = 'holmes.freenode.net'
 port   = 6667
 
 
