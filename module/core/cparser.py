@@ -70,40 +70,14 @@ class Parser():
         try: data['argv'] = command[1:]
         except: data['argv'] = None
 
-        ''' CORE CMD START '''
-        if (data['cmd'] == 'mod'):
-            core = self.modules.mcore.keys()
-            core = ", ".join(core)
-            extra = ""
-            for mod in self.modules.mextra:
-                extra += "%s %s, " % (mod.name, mod.version)
-            
-            if (len(extra)>1): extra = extra[:-2]
+        coreCmd = self.modules.mcore['corecmd'].parse_cmd(channel,data['cmd'],data['argv'])
 
-            self.communication.say(channel,"Modules loaded: CORE[%s] EXTRA[%s]" % (core,extra))
-        
-        if data['argv']:
-            if (data['cmd'] == 'load'):
-                msg = self.modules.dynamicLoader.load(data['argv'][0])
-                self.communication.say(channel,msg[1])
-            elif (data['cmd'] == 'unload'):
-                msg = self.modules.dynamicLoader.unload(data['argv'][0])
-                print msg
-                self.communication.say(channel,msg[1])
-            elif (data['cmd'] == 'reload'):
-                msg = self.modules.dynamicLoader.reloadm(data['argv'][0])
-                self.communication.say(channel,msg)
-            elif (data['cmd'] == 'download'):
-                msg = self.modules.dynamicLoader.download(data['argv'][0])
-                self.communication.say(channel,msg)
+        if not coreCmd:
+            cmdModules = self.modules.listening('cmd')
 
-        ''' CORE CMD END '''
-
-        cmdModules = self.modules.listening('cmd')
-
-        for module in cmdModules:
-            try: thread.start_new_thread(module.main, (data, ) )
-            except: print "!!!! module '%s %s' failed." % (module.name,module.version)
+            for module in cmdModules:
+                try: thread.start_new_thread(module.main, (data, ) )
+                except: print "!!!! module '%s %s' failed." % (module.name,module.version)
 
 
 

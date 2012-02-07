@@ -56,6 +56,7 @@ class ModuleManager():
         import cparser as parser
         import connection
         import recentdata
+        import corecmd
         self.mcore['connection'] = connection.Connection(
                 cfg.nick,
                 cfg.ident,
@@ -64,6 +65,7 @@ class ModuleManager():
         self.mcore['communication'] = communication.Communication(self.mcore['connection'])
         self.mcore['recentdata'] = recentdata.Data()
         self.mcore['parser'] = parser.Parser(self)
+        self.mcore['corecmd'] = corecmd.CoreCMD(self)
 
 
     def listening(self, keyword):
@@ -95,8 +97,7 @@ class ModuleManager():
         'name' is loaded.
         '''
 
-        print self.mcore[name]
-        try: return self.mcore[name]
+        try: return self.mcore[str(name)]
         except: return None
     
     def extra(self,name):
