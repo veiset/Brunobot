@@ -8,12 +8,13 @@ from urllib2 import quote, urlopen
 from re import search as rexsearch
 
 ''' Required for Brunobot module'''
-version = '1.0'
-name    = 'tvrage'
-require = ['communication']
-listen  = ['cmd']
-helptxt = '...'
-syntax  = 'fdjsks'
+version     = '1.0'
+name        = 'tvrage'
+require     = ['communication']
+listen      = ['cmd']
+cmd         = ['tv','tvrage','show']
+description = 'looks up when the next episode of a show airs'
+usage       = 'tv <show>, tvrage <show> : example .tv futurama' 
 
 class TVEpisode:
     '''

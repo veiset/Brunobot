@@ -67,6 +67,21 @@ class ModuleManager():
         self.mcore['parser'] = parser.Parser(self)
         self.mcore['corecmd'] = corecmd.CoreCMD(self)
 
+    def isCmd(self, module):
+        if not (inspect.ismodule(module)):
+            try: module = self.extra(module)
+            except: ''' no such module '''
+        print module
+
+        try: 
+            for listen in module.listen:
+                print listen
+                if listen == 'cmd':
+                    return True
+        except:
+            ''' no such module '''
+
+        return False
 
     def listening(self, keyword):
         '''

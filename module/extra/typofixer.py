@@ -1,11 +1,13 @@
 import sys
 ''' Required for Brunobot module'''
-version = '3.2'
-name    = 'typofixer'
-author  = 'Vegard Veiset' # optional
-url     = 'http://veiset.org/svn/bruno/module/typo.py' # optional
-require = ['communication','recentdata']
-listen  = ['channel','privmsg']
+version     = '3.2'
+name        = 'typofixer'
+author      = 'Vegard Veiset' # optional
+url         = 'http://veiset.org/svn/bruno/module/typo.py' # optional
+require     = ['communication','recentdata']
+listen      = ['channel','privmsg']
+description = 'correct a typo from the last sentence a user wrote'
+usage       = '*correctWord' 
 
 def distance(word1, word2):
     # Memeory optimization
@@ -65,7 +67,7 @@ def main(data):
         if (message[0] == "*" and message[-1] != "*"):
             correct = message[1:]
 
-        elif (message[0] == "*" and message[-1] != "*"):
+        elif (message[-1] == "*" and message[0] != "*"):
             correct = message[:-1]
 
         if correct:

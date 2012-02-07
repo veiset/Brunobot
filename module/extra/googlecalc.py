@@ -10,11 +10,15 @@ from re import search as rexsearch, IGNORECASE
 from urllib2 import Request, quote, urlopen
 
 ''' Required for Brunobot module'''
-version = '1.1'
-name    = 'googlecalc'
-author  = 'Andreas Halle, Vegard Veiset' # optional
-require = ['communication']
-listen  = ['cmd']
+version     = '1.1'
+name        = 'googlecalc'
+require     = ['communication']
+listen      = ['cmd']
+cmd         = ['calc','calculate','gc']
+description = 'uses google to calculate different math expressions'
+usage       = 'calc 5+5, calc 10^100' 
+author      = 'Andreas Halle, Vegard Veiset' # optional
+
 
 def search(s):
     '''

@@ -68,14 +68,27 @@ class ModuleLoader():
                 return 'could not require modules defined.'
         except: return 'could not find requirements (require).'
     
+        cmd = False
         try:
             for listen in module.listen:
+                if listen == 'cmd':
+                    cmd = True
                 for action in self.listen_actions:
                     if (listen==action): listen_count += 1
 
             if (listen_count != len(module.listen)):
                 return 'could not determine actions to listen on.'
         except: return 'could not find actions to listen on (listen).'
+
+        if cmd:
+            try: cmdl = module.cmd
+            except: return 'using cmd module without defining which cmds to listen to (cmd = []).'
+
+        try: usage = module.usage 
+        except: return 'no usage defined.'
+
+        try: description = module.description
+        except: return 'no description found.'
     
         # TODO: this should also check for method arguments
         if not (inspect.isfunction(getattr(module,'main'))):
@@ -219,9 +232,9 @@ class DynamicLoad():
             return tmpimport[1]
 
         extra_info = []
-        try: extra_info.append("Author: " + tmpmod.author)
+        try: extra_info.append("Author: %s" % tmpmod.author)
         except: extra_info.append("Author: uknown")
-        try: extra_info.append("url: " + tmpmod.url)
+        try: extra_info.append("url: %s" % tmpmod.url)
         except: extra_info.append("url: unknown")
 
         extra_info = ", ".join(extra_info)
