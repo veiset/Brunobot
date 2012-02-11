@@ -33,4 +33,4 @@ you know, then you don't. So don't break anything
 here.
 '''
 
-userhost = lambda a,b,c: a+b+c
+userhost = lambda a,b,c: a+"!"+b+"@"+c
