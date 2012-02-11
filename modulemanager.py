@@ -1,3 +1,7 @@
+__author__  = 'Vegard Veiset'
+__email__   = 'veiset@gmail.com'
+__license__ = 'GPL'
+
 import config as cfg
 import sys
 import inspect
@@ -21,6 +25,8 @@ class ModuleManager():
         self.mcore = {}
         self.mextra = []
         self.mplugin = []
+
+        self.cmdlist = {}
         
         self.loadCore()
 
@@ -39,6 +45,10 @@ class ModuleManager():
 
         module = self.moduleLoader.load(name)
         if (inspect.ismodule(module)):
+            if (self.isCmd(module)):
+                for cmd in module.cmd:
+                    cmd[self.cmdlist] = module
+
             print module
             self.mextra.append(module)
         else:

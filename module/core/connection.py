@@ -2,8 +2,11 @@
 '''
 brunobot v5
 
-@author: Andreas Halle
 '''
+__author__  = 'Andreas Halle, Vegard Veiset'
+__email__   = 'veiset@gmail.com'
+__license__ = 'GPL'
+
 import re
 import socket
 import string

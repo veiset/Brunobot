@@ -1,3 +1,8 @@
+""" Communicaton """
+__author__  = 'Vegard Veiset'
+__email__   = 'veiset@gmail.com'
+__license__ = 'GPL'
+
 import time
 class Communication():
 

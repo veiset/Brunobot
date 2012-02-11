@@ -1,4 +1,9 @@
+__author__  = 'Vegard Veiset'
+__email__   = 'veiset@gmail.com'
+__license__ = 'GPL'
+
 import time
+import config as cfg
 class UserData():
 
     def __init__(self,nick,ident,host):
@@ -13,12 +18,15 @@ class UserData():
     def lastMsg(self):
         return self.data[-1]
 
+    def mostRecent(self):
+        return self.data[-2]
+
 class Data(): 
    
 
     def __init__(self):
         self.users = {}
-        self.userhost = lambda a,b,c: a+b+c
+        self.userhost = cfg.userhost
 
     def store(self,nick,ident,host,channel,message):
         print self.userhost(nick,ident,host)

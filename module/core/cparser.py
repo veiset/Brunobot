@@ -1,3 +1,7 @@
+__author__  = 'Vegard Veiset'
+__email__   = 'veiset@gmail.com'
+__license__ = 'GPL'
+
 import threading
 import regex
 import re
@@ -74,10 +78,13 @@ class Parser():
 
         if not coreCmd:
             cmdModules = self.modules.listening('cmd')
-
-            for module in cmdModules:
+            
+            try:
+                module = self.modules.cmdlist[data['cmd']]
                 try: thread.start_new_thread(module.main, (data, ) )
                 except: print "!!!! module '%s %s' failed." % (module.name,module.version)
+            except:
+                print "!!!! could not find module that listens to %s." % data['cmd']
 
 
 

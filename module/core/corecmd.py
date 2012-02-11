@@ -1,3 +1,7 @@
+__author__  = 'Vegard Veiset'
+__email__   = 'veiset@gmail.com'
+__license__ = 'GPL'
+
         
 class CoreCMD():
     '''

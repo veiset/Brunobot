@@ -59,6 +59,8 @@ def main(data):
     channel = data['channel']
     message = data['msg']
 
+    print message
+
     correct = False
     # Ensuring that the message to correct is long enough
     if (len(message) > 1):
@@ -74,7 +76,9 @@ def main(data):
             # Using the injected recentdata object to get the previous
             # message the user typed
             user = recentdata.user(nick,ident,host)
-            lastmsg = user.lastMsg()
+            lastmsg = user.data[-2]
+            #lastmsg = user.mostRecent()
+            print lastmsg
 
             typo = correctMe(lastmsg['msg'],correct)
             if (typo):

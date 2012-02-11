@@ -1,3 +1,7 @@
+__author__  = 'Vegard Veiset'
+__email__   = 'veiset@gmail.com'
+__license__ = 'GPL'
+
 import sys
 import inspect
 import urllib2
@@ -148,6 +152,11 @@ class DynamicLoad():
             module = self.mloader.load(name)
 
             if (inspect.ismodule(module)):
+                
+                if (self.mloader.modules.isCmd(module)):
+                    for cmd in module.cmd:
+                        self.mloader.modules.cmdlist[cmd] = module
+
                 self.mloader.modules.mextra.append(module)
                 return (True,'Module %s %s loaded.' % (module.name, module.version), module)
             else:
