@@ -11,8 +11,9 @@ port   = 6667
 '''
 User config
 '''
-admin = [['vz', '~vz', 'veiset.org'],
-         ['',   '',    'veiset.org']]
+owner = [['vz', '~vz', 'veiset.org']]
+
+admin = [['*', '*', 'veiset.org']]
 
 
 '''

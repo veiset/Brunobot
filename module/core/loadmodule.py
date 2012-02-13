@@ -6,6 +6,7 @@ import sys
 import inspect
 import urllib2
 import os 
+import presist
 
 class ModuleLoader():
     '''
@@ -73,16 +74,25 @@ class ModuleLoader():
         except: return 'could not find requirements (require).'
     
         cmd = False
+        presist = False
         try:
             for listen in module.listen:
-                if listen == 'cmd':
+                if listen is 'cmd':
                     cmd = True
+                if listen is 'presist':
+                    presist = True
+
                 for action in self.listen_actions:
                     if (listen==action): listen_count += 1
 
             if (listen_count != len(module.listen)):
                 return 'could not determine actions to listen on.'
+            
         except: return 'could not find actions to listen on (listen).'
+
+        if presist:
+            try: presistl = module.presist
+            except: return 'using presist without anything to presist (presist = []) missing.'
 
         if cmd:
             try: cmdl = module.cmd
@@ -114,7 +124,11 @@ class ModuleLoader():
         # injecting depcendencies
         if (inspect.ismodule(module)):
             for coremodule in module.require:
-                vars(module)[coremodule] = self.modules.mcore[coremodule]
+                if coremodule is 'presist':
+                    vars(module)['presist'] = presist.Presist(module,module.presist)
+                    module.presist.load()
+                else:
+                    vars(module)[coremodule] = self.modules.mcore[coremodule]
 
         else:
             try: del sys.modules[name]
@@ -258,6 +272,6 @@ class DynamicLoad():
 
         os.remove('tmpmodule.py')
 
-        self.load(name)
+        #self.load(name)
         
-        return 'Module: %s %s REQUIRE[%s] LISTEN[%s] %s' % (name, version, require, listen, extra_info)
+        return 'Downloaded module: %s %s REQUIRE[%s] LISTEN[%s] %s.' % (name, version, require, listen, extra_info)

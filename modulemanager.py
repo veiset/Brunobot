@@ -67,17 +67,22 @@ class ModuleManager():
         import connection
         import recentdata
         import corecmd
+        import presist
+        import auth
+
         self.mcore['connection'] = connection.Connection(
                 cfg.nick,
                 cfg.ident,
                 cfg.name)
-
+        
+        self.mcore['auth'] = auth.Auth()
         self.mcore['communication'] = communication.Communication(self.mcore['connection'])
         self.mcore['recentdata'] = recentdata.Data()
         self.mcore['parser'] = parser.Parser(self)
         self.mcore['corecmd'] = corecmd.CoreCMD(self)
+        self.mcore['presist'] = {}
 
-    def isCmd(self, module):
+    def isCmd(self, module, keyword='cmd'):
         if not (inspect.ismodule(module)):
             try: module = self.extra(module)
             except: ''' no such module '''
@@ -86,10 +91,18 @@ class ModuleManager():
         try: 
             for listen in module.listen:
                 print listen
-                if listen == 'cmd':
+                if listen == keyword:
                     return True
         except:
             ''' no such module '''
+
+        return False
+
+    def requires(self, module, keyword):
+        if inspect.ismodule(module):
+            for req in module.require:
+                if (req == keyword):
+                    return True
 
         return False
 

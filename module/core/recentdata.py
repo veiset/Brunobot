@@ -37,5 +37,5 @@ class Data():
         self.users[self.userhost(nick,ident,host)].msg(channel,message)
 
     def user(self,nick,ident,host):
-        return self.users[(nick+ident+host)]
+        return self.users[self.userhost(nick,ident,host)]
 

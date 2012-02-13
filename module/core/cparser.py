@@ -74,7 +74,7 @@ class Parser():
         try: data['argv'] = command[1:]
         except: data['argv'] = None
 
-        coreCmd = self.modules.mcore['corecmd'].parse_cmd(channel,data['cmd'],data['argv'])
+        coreCmd = self.modules.mcore['corecmd'].parse_cmd(data)
 
         if not coreCmd:
             cmdModules = self.modules.listening('cmd')
@@ -82,7 +82,15 @@ class Parser():
             try:
                 module = self.modules.cmdlist[data['cmd']]
                 try: thread.start_new_thread(module.main, (data, ) )
-                except: print "!!!! module '%s %s' failed." % (module.name,module.version)
+                except: 
+                    try:
+                        self.communication(channel,"!!!! module '%s %s' failed." % (module.name,module.version))
+                    except:
+                        print "!!!! module '%s %s' failed." % (module.name,module.version)
+
+                if self.modules.requires(module,'presist'):
+                    module.presist.save()
+
             except:
                 print "!!!! could not find module that listens to %s." % data['cmd']
 
@@ -110,7 +118,15 @@ class Parser():
         # TODO: each should be in a new thread
         for module in privModules:
             try: thread.start_new_thread(module.main, (data, ) )
-            except: print "!!!! module '%s %s' failed." % (module.name,module.version)
+            except: 
+                try:
+                    self.communication(channel,"!! module '%s %s' failed." % (module.name,module.version))
+                except:
+                    print "!! module '%s %s' failed." % (module.name,module.version)
+        
+            if self.modules.requires(module,'presist'):
+                print 'Module presist!'
+                module.presist.save()
 
         self.recentdata.store(nick,ident,host,channel,message)
   
