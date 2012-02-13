@@ -13,6 +13,7 @@ import string
 import threading
 import time
 import regex
+import config as cfg
 
 
 class Connection():
@@ -53,7 +54,7 @@ class Connection():
         self.irc.connect((server, port))
         self.irc.send(u'NICK %s\n' % (self.nick))
         self.irc.send(u'USER %s %s bla :%s\n' % (self.ident, server, self.name))
-        self.irc.send(u'JOIN #brbot\r\n')
+        self.irc.send(u'JOIN %s\r\n' % cfg.channel)
         self.connected = True
         stayawake = self.StayAwake(self)
         stayawake.start()

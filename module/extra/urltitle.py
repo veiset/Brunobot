@@ -23,7 +23,7 @@ import re
 def readHTMLHeader(url):
     try:
         data = BeautifulSoup(urlopen(url).read())
-        return '[%s]' % data.html.head.title.string
+        return '%s' % data.html.head.title.string
     except:
         return None
 
@@ -35,4 +35,6 @@ def main(data):
         for title in match:
             header = readHTMLHeader(title)
             if header:
-                communication.say(data['channel'],header.strip().replace('\n',''))
+                header = header.replace('\n','').replace('  ','').strip() 
+                print header
+                communication.say(data['channel'], '[%s]' % header)

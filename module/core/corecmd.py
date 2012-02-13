@@ -211,35 +211,41 @@ class CoreCMD():
 
         if (cmd == 'listmod' or cmd == 'modlist'):
             self.cmd_listmod(channel)
+            return True
         
 
         if argv:
             if cmd == 'load':
-                if auth.isAdmin(None,ident,host):
+                if auth.isAdmin(user,ident,host):
                     self.cmd_load(channel,argv)
                 return True
                
             elif cmd == 'unload':
-                if auth.isAdmin(None,ident,host):
+                if auth.isAdmin(user,ident,host):
                     self.cmd_unload(channel,argv)
                 return True
+
             elif cmd == 'reload':
-                if auth.isAdmin(None,ident,host):
+                if auth.isAdmin(user,ident,host):
                     self.cmd_reload(channel,argv)
                 return True
+
             elif cmd == 'download':
-                if auth.isOwner(None,ident,host):
+                if auth.isOwner(user,ident,host):
                     self.cmd_download(channel,argv)
                 return True
+
             elif cmd == 'help':
                 self.cmd_help(channel,argv)
                 return True
+
             elif (cmd == 'join'):
-                if auth.isOwner(None,ident,host):
+                if auth.isOwner(user,ident,host):
                     self.cmd_join(argv)
                 return True
+
             elif (cmd == 'part'):
-                if auth.isOwner(None,ident,host):
+                if auth.isOwner(user,ident,host):
                     self.cmd_part(argv)
                 return True
 

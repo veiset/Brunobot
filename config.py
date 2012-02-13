@@ -1,19 +1,20 @@
 '''
 Connection variables
 '''
-nick   = 'botvzbrun'
-ident  = 'botvz'
-name   = 'brunobot'
+nick    = 'botvzbrun'
+ident   = 'botvz'
+name    = 'brunobot'
 server = 'efnet.port80.se'
-#server = 'holmes.freenode.net'
-port   = 6667
+#server  = 'holmes.freenode.net'
+channel = '#brbot'
+port    = 6667
 
 '''
 User config
 '''
 owner = [['vz', '~vz', 'veiset.org']]
 
-admin = [['*', '*', 'veiset.org']]
+#admin = [['*', '*', 'veiset.org']]
 
 
 '''
