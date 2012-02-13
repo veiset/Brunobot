@@ -76,8 +76,8 @@ def main(data):
             # Using the injected recentdata object to get the previous
             # message the user typed
             user = recentdata.user(nick,ident,host)
-            lastmsg = user.data[-2]
-            #lastmsg = user.mostRecent()
+            #lastmsg = user.data[-2]
+            lastmsg = user.mostRecent()
             print lastmsg
 
             typo = correctMe(lastmsg['msg'],correct)
