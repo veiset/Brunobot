@@ -37,7 +37,14 @@ class CoreCMD():
                     'listmod'  : cmd_listmod,
                     'list'     : cmd_list,
                     'add'      : cmd_add}
-                
+
+    def load_cmds(self):
+        ''' 
+        Method for loading core commands from
+        the module/core/cmd/ directory.
+        '''
+        print "not yet implemented"
+
     def cmd_join(self,argv):
         self.modules.mcore['connection'].irc.send('JOIN %s\r\n' % argv[0])
 
