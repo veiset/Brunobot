@@ -53,11 +53,24 @@ class CoreCMD():
         otherwise.
         '''
         cmd = data['cmd']
-        if cmd in self.cmd:
+        if cmd == 'cmd' and data['argv']:
+            try:
+                info_cmd = self.cmd[data['argv'][0]]
+                cmd_used = ", ".join(info_cmd.cmd) 
+                info     = "[%s]    usage: %s" % (cmd_used, info_cmd.usage)
+                descr    = "%sdescription: %s" % (" "*len(cmd_used), info_cmd.description)
+
+                self.communication.say(data['channel'],"%s" % info)
+                self.communication.say(data['channel'],"%s" % descr)
+            except:
+                self.communication.say(data['channel'],"Could not find info for %s" % data['argv'][0])
+
+            return True
+        elif cmd in self.cmd:
             try:
                 self.cmd[cmd].main(self.modules, data)
             except:
-                print '!!!! Core MODULE FAILED!!!!!!!!!!!!!'
+                print '!!!! Core MODULE FAILED !!!!'
 
             return True
 
