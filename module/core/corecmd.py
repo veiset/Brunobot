@@ -4,7 +4,6 @@ __license__ = 'GPL'
 
 import os
 import sys
-sys.path.append('module/core/cmd')
 
         
 class CoreCMD():
@@ -16,6 +15,7 @@ class CoreCMD():
     '''
 
     def __init__(self, m):
+        sys.path.append('module/core/cmd')
         self.modules = m
         self.communication = m.mcore['communication']
         #self.cmd = ['load','unload','reload','mod','download','help']
@@ -52,7 +52,7 @@ class CoreCMD():
         of the core commands. Returns true if, false
         otherwise.
         '''
-        cmd     = data['cmd']
+        cmd = data['cmd']
         if cmd in self.cmd:
             try:
                 self.cmd[cmd].main(self.modules, data)
@@ -61,8 +61,7 @@ class CoreCMD():
 
             return True
 
-        retrun False
+        return False
 
-        auth = self.auth
         
  
