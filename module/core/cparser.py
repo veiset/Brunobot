@@ -66,7 +66,8 @@ class Parser():
         '''
 
         command = cmd.split()
-        data = {'nick'    :nick,
+        data = {'type'    :'cmd',
+                'nick'    :nick,
                 'ident'   :ident,
                 'host'    :host,
                 'channel' :channel,
@@ -109,7 +110,8 @@ class Parser():
 
 
         privModules = self.modules.listening('privmsg')
-        data = {'nick'    :nick,
+        data = {'type'    :'privmsg',
+                'nick'    :nick,
                 'ident'   :ident,
                 'host'    :host, 
                 'channel' :channel, 
