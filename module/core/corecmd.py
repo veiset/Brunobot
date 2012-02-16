@@ -3,7 +3,6 @@ __email__   = 'veiset@gmail.com'
 __license__ = 'GPL'
 
 import os
-import sys
 
         
 class CoreCMD():
@@ -15,28 +14,27 @@ class CoreCMD():
     '''
 
     def __init__(self, m):
-        sys.path.append('module/core/cmd')
         self.modules = m
         self.communication = m.mcore['communication']
         #self.cmd = ['load','unload','reload','mod','download','help']
         self.auth = m.mcore['auth']
-        import cmd_mod
-        import cmd_help
-        import cmd_load
-        import cmd_unload
-        import cmd_reload
-        import cmd_download
-        import cmd_listmod
-        import cmd_list
-        import cmd_add
-        self.cmd = {'mod'      : cmd_mod, 
-                    'help'     : cmd_help,
-                    'load'     : cmd_load,
-                    'reload'   : cmd_reload,
-                    'download' : cmd_download,
-                    'listmod'  : cmd_listmod,
-                    'list'     : cmd_list,
-                    'add'      : cmd_add}
+        import module.core.cmd.mod
+        import module.core.cmd.help
+        import module.core.cmd.load
+        import module.core.cmd.unload
+        import module.core.cmd.reload
+        import module.core.cmd.download
+        import module.core.cmd.listmod
+        import module.core.cmd.list
+        import module.core.cmd.add
+        self.cmd = {'mod'      : module.core.cmd.mod, 
+                    'help'     : module.core.cmd.help,
+                    'load'     : module.core.cmd.load,
+                    'reload'   : module.core.cmd.reload,
+                    'download' : module.core.cmd.download,
+                    'listmod'  : module.core.cmd.listmod,
+                    'list'     : module.core.cmd.list,
+                    'add'      : module.core.cmd.add}
 
     def load_cmds(self):
         ''' 
@@ -45,10 +43,10 @@ class CoreCMD():
         '''
         print "not yet implemented"
 
-    def cmd_join(self,argv):
+    def join(self,argv):
         self.modules.mcore['connection'].irc.send('JOIN %s\r\n' % argv[0])
 
-    def cmd_part(self,argv):
+    def part(self,argv):
         self.modules.mcore['connection'].irc.send('PART %s\r\n' % argv[0])
 
 
@@ -63,9 +61,9 @@ class CoreCMD():
         if cmd == 'cmd' and data['argv']:
             try:
                 info_cmd = self.cmd[data['argv'][0]]
-                cmd_used = ", ".join(info_cmd.cmd) 
-                info     = "[%s]    usage: %s" % (cmd_used, info_cmd.usage)
-                descr    = "%sdescription: %s" % (" "*len(cmd_used), info_cmd.description)
+                used     = ", ".join(info_cmd.cmd) 
+                info     = "[%s]    usage: %s" % (used, info_cmd.usage)
+                descr    = "%sdescription: %s" % (" "*len(used), info_cmd.description)
 
                 self.communication.say(data['channel'],"%s" % info)
                 self.communication.say(data['channel'],"%s" % descr)
@@ -73,6 +71,13 @@ class CoreCMD():
                 self.communication.say(data['channel'],"Could not find info for %s" % data['argv'][0])
 
             return True
+        elif cmd == 'reloadcmd':
+            try:
+                for module in self.cmd.values():
+                    reload(module)
+                self.communication.say(data['channel'], '%d core commands modules reloaded.' % len(self.cmd))
+            except:
+                self.communication.say(data['channel'], 'Warning: could not reload core command modules.')
         elif cmd in self.cmd:
             try:
                 self.cmd[cmd].main(self.modules, data)

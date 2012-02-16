@@ -3,7 +3,6 @@ __email__   = 'veiset@gmail.com'
 __license__ = 'GPL'
 
 import config as cfg
-import sys
 import inspect
 class ModuleManager():
     '''
@@ -21,7 +20,6 @@ class ModuleManager():
         extra modules defined in the config file (config.py).
         '''
 
-        sys.path.append('module/core')
         self.mcore = {}
         self.mextra = []
         self.mplugin = []
@@ -30,7 +28,7 @@ class ModuleManager():
         
         self.loadCore()
 
-        import loadmodule
+        import module.core.loadmodule as loadmodule
         self.moduleLoader = loadmodule.ModuleLoader(self)
         self.dynamicLoader = loadmodule.DynamicLoad(self.moduleLoader)
 
@@ -62,13 +60,13 @@ class ModuleManager():
         required for initializing them. 
         '''
 
-        import communication
-        import cparser as parser
-        import connection
-        import recentdata
-        import corecmd
-        import presist
-        import auth
+        import module.core.communication as communication
+        import module.core.cparser as parser
+        import module.core.connection as connection
+        import module.core.recentdata as recentdata
+        import module.core.corecmd as corecmd
+        import module.core.presist as presist
+        import module.core.auth as auth
 
         self.mcore['connection'] = connection.Connection(
                 cfg.nick,

@@ -42,8 +42,6 @@ class ModuleLoader():
         method that is to be run when called (main).
         '''
 
-        sys.path.append('module/extra')
-        sys.path.append('module/plugin')
 
         module = None
         version = None
@@ -54,7 +52,9 @@ class ModuleLoader():
         url = None # Optional
     
         # loading the module
-        try: module = __import__(name)
+        try: 
+            module = __import__("module.extra." + name)
+            module = sys.modules["module.extra." + name]
         except: return 'no such module "%s", or errors with the code of the module.' % name
     
         # checking for module description
@@ -133,6 +133,7 @@ class ModuleLoader():
         else:
             try: del sys.modules[name]
             except: ''' do nothing '''
+
         return module
 
 

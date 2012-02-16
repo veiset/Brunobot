@@ -48,5 +48,5 @@ def main(data):
     if article:
         communication.say(data['channel'],article)
     else: 
-        communication.say(data['channel'],'Could not find anything for "%s".' % argv) 
+        communication.say(data['channel'],'Could not find anything for "%s".' % a) 
 
