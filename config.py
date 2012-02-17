@@ -1,11 +1,13 @@
 '''
 Connection variables
 '''
-nick    = 'brunbot2'
+nick    = 'brunbo2vz'
 ident   = 'botvz'
 name    = 'brunobot'
-server = 'efnet.port80.se'
-#server  = 'holmes.freenode.net'
+#server = 'efnet.port80.se'
+server  = 'holmes.freenode.net'
+#server  = 'irc.choopa.net'
+#server  = 'irc.homelien.no'
 channel = '#brbot'
 port    = 6667
 

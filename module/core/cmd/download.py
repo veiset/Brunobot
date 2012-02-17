@@ -18,7 +18,7 @@ def main(modules, data):
         passed, status, errors, failures, url = result
 
         if module and passed:
-            communication.say(channel,'%d/%d tests passed. Module %s loaded.' % (status[0],status[1],data['argv'][0]))
+            communication.say(channel,"%d/%d tests passed. Module %s downloaded and saved as '%s'." % (status[0],status[1],data['argv'][0],module.name))
         else:
             if url:
                 communication.say(channel,'Failed. %d/%d tests passed. Module %s not loaded. Error report: %s' % (status[0],status[1], data['argv'][0], url))
