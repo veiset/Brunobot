@@ -8,6 +8,9 @@ def main(modules, data):
     communication = modules.mcore['communication']
 
     if argv:
-        msg = modules.dynamicLoader.unload(argv[0])
-        communication.say(channel,msg[1])
+        unloaded, result = modules.dynamicLoader.unload(argv[0])
+        if unloaded: 
+            communication.say(channel,'Module unloaded')
+        else:
+            communication.say(channel,'Failed to unload module')
 

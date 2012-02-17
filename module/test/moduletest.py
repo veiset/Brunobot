@@ -2,7 +2,8 @@ import unittest
 import sys
 import inspect
 import testcases as tests
-
+import pastebin
+import config as cfg
 
 class TestLogger():
     '''
@@ -20,24 +21,26 @@ class TestLogger():
 
 logger = TestLogger()
 
-def printResults(successful,testsRun,errors,failures):
-    print "%s/%s tests successful." % (successful,testsRun)
+def results(successful,testsRun,errors,failures):
+    result = ''
+    result += "%s/%s tests successful.\n" % (successful,testsRun)
     if errors:
-        print "Errors:"
+        result += "Errors:\n"
         for error in errors:
-            print '%s : %s' % (error[0],error[1])
+           result += '%s : %s\n' % (error[0],error[1])
     
     if failures:
-        print "Failures:"
+        result += "Failures:\n"
         for failure in failures:
-            print '%s : %s' % (failure[0],failure[1])
+            result += '%s : %s\n' % (failure[0],failure[1])
    
-    print "---- End of test results ---- "
+    result += "---- End of test results ---- \n"
+
+    return result
 
 
 
-def validateModule(module):
-    tests.test_mod = module
+def validateModule(module, verbose=False):
     
     def injectModule(module):
         '''
@@ -68,11 +71,13 @@ def validateModule(module):
         prettyList = []
         for fail in result:
             method = fail[0]
-            print fail, "\n\n"
             error  = " ".join(fail[-1:][0].split("\n")[-2:-1][0].split()[1:])
             prettyList.append([method.shortDescription(),error])
 
         return prettyList
+
+    injectModule(module)
+    tests.test_mod = module
 
     suite = unittest.TestLoader().loadTestsFromTestCase(tests.TestValidateModule)
     testResult = unittest.TextTestRunner(logger, verbosity=2).run(suite)
@@ -88,14 +93,30 @@ def validateModule(module):
     if len(errors) == 0:
         errors = None
 
-    return (testResult.wasSuccessful(), (successful,testsRun), errors, failures)
+    pastebinUrl = None
 
-import cmdtest2 as test_mod
-import cmdtest as fail_mod
-rtest1 = validateModule(test_mod)
-rtest2 = validateModule(fail_mod)
+    if verbose:
+        result      = results(successful,testsRun, errors, failures)
+        pastebinUrl = pastebin.submit(
+                        result, 
+                        paste_expire_date="10M",
+                        paste_private=True,
+                        paste_name="Error log.")
+        
 
-printResults(rtest1[1][0],rtest1[1][1],rtest1[2],rtest1[3])
-printResults(rtest2[1][0],rtest2[1][1],rtest2[2],rtest2[3])
+    return (testResult.wasSuccessful(), (successful,testsRun), errors, failures, pastebinUrl)
 
+#import cmdtest2 as test_mod
+#import cmdtest as fail_mod
+#import fail
+#rtest1 = validateModule(test_mod)
+#rtest2 = validateModule(fail)
+#rtest3 = validateModule(fail_mod)
+#print rtest1
+#print "\n"
+#print rtest3
+
+#printResults(rtest1[1][0],rtest1[1][1],rtest1[2],rtest1[3])
+#printResults(rtest2[1][0],rtest2[1][1],rtest2[2],rtest2[3])
+#
 #def printResults(successful,testsRun,errors,failures):

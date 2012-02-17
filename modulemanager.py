@@ -41,7 +41,7 @@ class ModuleManager():
         Load a module using the module loader. 
         '''
 
-        module = self.moduleLoader.load(name)
+        module, result = self.moduleLoader.load(name)
         if (inspect.ismodule(module)):
             if (self.isCmd(module)):
                 for cmd in module.cmd:
@@ -50,7 +50,8 @@ class ModuleManager():
             print module
             self.mextra.append(module)
         else:
-            print "!!!! Error loading module:" + module
+            print "!!!! Error loading module:"
+            print result
 
 
     def loadCore(self):

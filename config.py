@@ -36,3 +36,6 @@ here.
 '''
 
 userhost = lambda a,b,c: a+"!"+b+"@"+c
+
+''' Paste module validation errors to pastebin '''
+pastebin = True

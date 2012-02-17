@@ -3,11 +3,43 @@ import sys
 import inspect
 test_mod = None
 
+#class RunModule():
+    
+def runmodule(module, data):
+    try:
+        module.main(data)
+        return [True,'Everything is ok']
+    except Exception as error:
+        error = str(error)
+        if len(error) > 73:
+            error = error[0:73] + "..."
+        #print error
+        return [False, error]
+
+
+
 class TestValidateModule(unittest.TestCase):
     ''' Testing that all required variables are defined correctly '''
 
     def setUp(self):
         self.module = test_mod
+        self.run_module = runmodule
+        self.mock_cmd_data = {
+                'type'    : 'cmd',
+                'nick'    : 'vz',
+                'ident'   : '~vz',
+                'host'    : 'veiset.org',
+                'channel' : '#brunobot',
+                'cmd'     : None,  # defined in test
+                'argv'    : None}  # defined in test
+        self.mock_privmsg_data = {
+                'type'    : 'privmsg',
+                'nick'    : 'vz',
+                'ident'   : '~vz',
+                'host'    : 'veiset.org',
+                'channel' : '#brunobot',
+                'msg'     : None}  # defined in test  
+                 
 
     # Required variables each module must contain.
     def testHasNameDefined(self):
@@ -146,5 +178,58 @@ class TestValidateModule(unittest.TestCase):
             except:
                 self.assertTrue(False,"listens to presist, but 'presist' is undefined.")
     # End of require module requirements
+
+    def test_RunPrivmsgOfOneWord(self):
+        ''' Run test [listen: privmsg, words: one] '''
+        if 'privmsg' in self.module.listen:
+            self.mock_privmsg_data['msg'] = 'word'
+            runnable = self.run_module(self.module, self.mock_privmsg_data)
+            if not runnable[0]:
+                self.assertTrue(False,runnable[1])
+
+
+    def test_RunPrivmsgWithMultipleWords(self):
+        ''' Run test [listen: privmsg, words: multiple] '''
+        if 'privmsg' in self.module.listen:
+            self.mock_privmsg_data['msg'] = 'one two three words'
+            runnable = self.run_module(self.module, self.mock_privmsg_data)
+            if not runnable[0]:
+                self.assertTrue(False,runnable[1])
+
+    def test_RunAllCmdsDefinedWihtNoArgv(self):
+        ''' Run test [listen: cmd, argv: None] '''
+        if 'cmd' in self.module.listen:
+            for cmd in self.module.cmd:
+                self.mock_cmd_data['cmd']  = cmd
+                self.mock_cmd_data['argv'] = None
+
+                runnable = self.run_module(self.module, self.mock_cmd_data)
+                if not runnable[0]:
+                    self.assertTrue(False,runnable[1])
+
+    def test_RunAllCmdsDefinedWihtStringArgv(self):
+        ''' Run test [listen: cmd, argv: string] '''
+        if 'cmd' in self.module.listen:
+            for cmd in self.module.cmd:
+                self.mock_cmd_data['cmd']  = cmd
+                self.mock_cmd_data['argv'] = 'nothing'
+
+                runnable = self.run_module(self.module, self.mock_cmd_data)
+                if not runnable[0]:
+                    self.assertTrue(False,runnable[1])
+
+
+    def test_RunAllCmdsDefinedWihtIntegerArgv(self):
+        ''' Run test [listen: cmd, argv: int(string)] '''
+        if 'cmd' in self.module.listen:
+            for cmd in self.module.cmd:
+                self.mock_cmd_data['cmd']  = cmd
+                self.mock_cmd_data['argv'] = '1'
+
+                runnable = self.run_module(self.module, self.mock_cmd_data)
+                if not runnable[0]:
+                    self.assertTrue(False,runnable[1])
+
+
 
 

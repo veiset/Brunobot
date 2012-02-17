@@ -30,6 +30,7 @@ class CoreCMD():
         self.cmd = {'mod'      : module.core.cmd.mod, 
                     'help'     : module.core.cmd.help,
                     'load'     : module.core.cmd.load,
+                    'unload'   : module.core.cmd.unload,
                     'reload'   : module.core.cmd.reload,
                     'download' : module.core.cmd.download,
                     'listmod'  : module.core.cmd.listmod,
