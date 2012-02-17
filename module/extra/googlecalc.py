@@ -59,10 +59,9 @@ def unescape(s):
 
 
 def main(data):
-    cmd = data['cmd']
-    if (cmd == 'calc' or cmd == 'calculate' or cmd == 'gc'):
-        
-        argv = " ".join(data['argv'])
+    argv = data['argv']
+    if argv: 
+        argv = " ".join(argv)
 
         result = search(argv)
         if (result):

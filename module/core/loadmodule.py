@@ -50,6 +50,10 @@ class ModuleLoader():
             errors = [['Loading module',('no such module "%s", or errors syntax errors within the code of the module.' % name)]]
 
             return (None,(False, (0,0), errors, None, None))
+        try:
+            reload(sys.modules['module.extra.%s' + name])
+        except:
+            ''' Do nothing '''
 
         return (module, moduletest.validateModule(module,verbose))
 
@@ -126,7 +130,7 @@ class DynamicLoad():
                 self.mloader.modules.mextra.append(module)
                 return (module,result)
             else:
-                try: del sys.modules[name]
+                try: del sys.modules['module.extra.' + name]
                 except: ''' do nothing '''
                 return (False,result)
         else:
@@ -146,7 +150,7 @@ class DynamicLoad():
         mod = self.mloader.modules.extra(name)
         if (mod):
             self.mloader.modules.mextra.remove(mod)
-            try: del sys.modules[name]
+            try: del sys.modules['module.extra.' + name]
             except: ''' nothing ''' 
             return (True,(True, (1,1), None, None, None))
         else:
@@ -175,7 +179,7 @@ class DynamicLoad():
             return (None,(False, status, errors, None, None))
     
 
-    def download(self,url):
+    def download(self,url,verbose=False):
         ''' 
         Downloading a python module from the web and
         loads it using the load method.
@@ -198,11 +202,14 @@ class DynamicLoad():
             for line in html:
                 f.write(line)
             f.close()
-        except: return ('Error: Could not write to temp file')
+
+        except:
+            errors = [['Download module','error: could not write to tempfile']]
+            return (None,(False, (0,0), errors, None, None))
     
         #def validateModule(self,name):
-
-        tmpimport, result = self.mloader.validateModule('tmp_module')
+        tmpimport, result = self.mloader.validateModule('tmp_module',verbose)
+        tmpmod = None
         if (inspect.ismodule(tmpimport)):
             tmpmod = tmpimport
             name = tmpmod.name
@@ -210,7 +217,8 @@ class DynamicLoad():
             require = ", ".join(tmpmod.require)
             listen = ", ".join(tmpmod.listen)
         else:
-            return result
+            return None, result
+
 
         extra_info = []
         try: extra_info.append("Author: %s" % tmpmod.author)
@@ -231,8 +239,8 @@ class DynamicLoad():
 
             return (None,(False, status, errors, None, None))
 
-        os.remove('module/extra/tmpmodule.py')
+        os.remove('module/extra/tmp_module.py')
 
         #self.load(name)
-        return (True,'%d/%d tests passed. Module %s %s loaded.' % (result[1][1][0], result[1][1][1], module.name, module.version), module)
+        return tmpmod, result
         

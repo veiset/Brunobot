@@ -1,12 +1,18 @@
+import sys
 ''' Required for Brunobot module'''
 version = '1.0'
 name    = 'cmdtest'
 require = ['communication']
 listen  = ['cmd']
-cmd     = ['test']
-usage   = 'test'
-description = 'Only reply to a command. Very simple module.'
 
 def main(data):
-    communication.say(data['channel'],'test.')
+
+    channel = data['channel']
+
+    if (data['argv']):
+        communication.say(channel,"cmd '%s': argv %s !+1" % (data['cmd'], data['argv']) )
+    else:
+        communication.say(channel,"cmd '%s', no argv !+1" % (data['cmd']) )
+
+
 
