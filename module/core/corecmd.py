@@ -83,7 +83,7 @@ class CoreCMD():
             try:
                 self.cmd[cmd].main(self.modules, data)
             except:
-                print '!!!! Core MODULE FAILED !!!!'
+                print ' !! Module [%s] in corecmd failed.' % cmd
 
             return True
 

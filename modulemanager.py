@@ -47,12 +47,10 @@ class ModuleManager():
                 for cmd in module.cmd:
                     cmd[self.cmdlist] = module
 
-            print module
+            print ' .. Loaded module %s %s' % (module.name, module.version) 
             self.mextra.append(module)
         else:
-            print "!!!! Error loading module:"
-            print result
-
+            print " !! could not load module with name: %s" % name
 
     def loadCore(self):
         '''
@@ -84,16 +82,14 @@ class ModuleManager():
     def isCmd(self, module, keyword='cmd'):
         if not (inspect.ismodule(module)):
             try: module = self.extra(module)
-            except: ''' no such module '''
-        print module
+            except: ''' ++ Warning: isCmd() - no such module '''
 
         try: 
             for listen in module.listen:
-                print listen
                 if listen == keyword:
                     return True
         except:
-            ''' no such module '''
+            print ' ++ isCmd() - no such module '
 
         return False
 
@@ -120,13 +116,6 @@ class ModuleManager():
         return modules
 
 
-    def coreModules(self):
-        '''
-        TODO: Remove this
-        '''
-
-        return self.mcore
-
     def core(self,name):
         ''' 
         Checking for name in core, i.e:
@@ -149,8 +138,3 @@ class ModuleManager():
                 return mod
         return None
 
-#    
-#    def plugin(self,name):
-#        try: return self.mplugin[name]
-#        except: return None
-    

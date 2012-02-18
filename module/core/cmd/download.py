@@ -1,28 +1,57 @@
 cmd         = ['download']
 usage       = 'download <url>'
-description = 'Downloads and loads a module located on the web.'
+description = 'Downloads and tests a module located on the web.'
+import inspect
 
 def main(modules, data):
     argv          = data['argv']
     channel       = data['channel']
     communication = modules.mcore['communication']
 
-    if argv:
-        verbose = False
-        if len(argv) == 2:
-            if argv[1] == '-v' or argv[1] == 'verbose' or argv[1] == 'report':
-                verbose = True
+    nick  = data['nick']
+    ident = data['ident']
+    host  = data['host']
 
-        communication.say(channel,'Running tests on module (might take some time)...')
-        module, result = modules.dynamicLoader.download(argv[0],verbose)
-        passed, status, errors, failures, url = result
+    if modules.mcore['auth'].isAdmin(nick,ident,host):
+        if argv:
+            name = data['argv'][0]
+            verbose = False
 
-        if module and passed:
-            communication.say(channel,"%d/%d tests passed. Module %s downloaded and saved as '%s'." % (status[0],status[1],data['argv'][0],module.name))
-        else:
-            if url:
-                communication.say(channel,'Failed. %d/%d tests passed. Module %s not loaded. Error report: %s' % (status[0],status[1], data['argv'][0], url))
+            if len(argv) == 2:
+                if argv[1] == '-v' or argv[1] == 'verbose' or argv[1] == 'report':
+                    verbose = True
+   
+            communication.say(channel,'Running tests on module (might take some time)...')
+   
+            print argv
+            module, result = modules.dynamicLoader.download(argv[0],verbose)
+            print "all good"
+
+
+            valid          = result['valid']
+            successful     = result['successful']
+            tests          = result['tests']
+            errors         = result['errors']
+            failures       = result['failures']
+            url            = result['url']
+
+            if inspect.ismodule(module) and valid:
+                communication.say(channel,'%d/%d tests passed. Module %s downloaded, with name "%s"' % (successful, tests, name, module.name))
             else:
-                communication.say(channel,'Failed. %d/%d tests passed. Module %s not loaded.' % (status[0],status[1], data['argv'][0]))
+                if url:
+                    communication.say(channel,'Failed. Module %s not loaded. Error report: %s' % (successful, tests, name, url))
+                else:
+                    error_msg = ''
+                    errorC = 0
+                    failureC = 0
+                    if errors and len(errors) > 0:
+                        error_msg = " : ".join(errors[0])
+                        errorC = len(errors)
+                    if failures and len(failures) > 0:
+                        error_msg = " : ".join(failures[0])
+                        failureC = len(failures)
 
+                    communication.say(channel,'Failed. Errors: %d  Failures: %d. (%s)' % (errorC, failureC, error_msg))
+    else:
+        communication.say(channel,'You aren\'t allowed to do that. (requires admin)')
 

@@ -6,7 +6,7 @@ class Brunobot():
     def __init__(self):
         self.modules = modulemanager.ModuleManager()
 
-        print(self.modules.coreModules())
+        print(self.modules.mcore)
         
         self.connection = self.modules.core('connection')
         self.communication = self.modules.core('communication')

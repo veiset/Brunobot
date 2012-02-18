@@ -1,5 +1,9 @@
 '''
-Interface for the Communcation module.
+Mock object of Communication module. 
+Used for testing brunobot modules. This will be 
+injected instead of the real module, so that
+the unit test is able to run the brunbot-plugins
+main method with some expectations of behaviour.
 '''
 class Communication():
 

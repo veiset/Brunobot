@@ -1,11 +1,18 @@
 import unittest
 import sys
 import inspect
+# The module that is going to be tested
+# has to be defined outside the scope of the test.
 test_mod = None
 
 #class RunModule():
     
 def runmodule(module, data):
+    '''
+    Running the main method of the brunobot plugin
+    module. Catches exception and returns that if
+    the run test fails. 
+    '''
     try:
         module.main(data)
         return [True,'Everything is ok']

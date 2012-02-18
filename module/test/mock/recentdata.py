@@ -1,5 +1,9 @@
 '''
-Interface for the Recent Data module.
+Mock object of Recentdata module. 
+Used for testing brunobot modules. This will be 
+injected instead of the real module, so that
+the unit test is able to run the brunbot-plugins
+main method with some expectations of behaviour.
 '''
 class UserData():
 

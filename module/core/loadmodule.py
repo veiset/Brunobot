@@ -9,6 +9,16 @@ import os
 import presist
 import module.test.moduletest as moduletest
 
+def emptyResult():
+    result = {'valid'      : False,
+              'successful' : 0,
+              'tests'      : 0,
+              'errors'     : None,
+              'failures'   : None,
+              'url'        : None}
+
+    return result
+
 class ModuleLoader():
     '''
     ModuleLoader.
@@ -31,8 +41,8 @@ class ModuleLoader():
 
         self.modules = modules
         self.require_modules = modules.mcore.keys() # modules.mcore
-        self.listen_actions = ['privmsg','channel','system','cmd']
-    
+   
+
     def validateModule(self,name,verbose=False):
         '''
         Validating that the specified module (name)
@@ -43,29 +53,25 @@ class ModuleLoader():
         method that is to be run when called (main).
         '''
 
+        result = emptyResult()
+        module = None
         try: 
             module = __import__("module.extra." + name)
             module = sys.modules["module.extra." + name]
         except: 
-            errors = [['Loading module',('no such module "%s", or errors syntax errors within the code of the module.' % name)]]
+            result['errors'] = [['Loading module',('no such module "%s", or errors syntax errors.' % name)]]
+            return (None, result)
+        #try:
+        #    reload(sys.modules['module.extra.%s' + name])
+        #except:
+        #    ''' Do nothing '''
 
-            return (None,(False, (0,0), errors, None, None))
-        try:
-            reload(sys.modules['module.extra.%s' + name])
-        except:
-            ''' Do nothing '''
+        unittest = moduletest.validateModule(module,verbose) 
 
-        return (module, moduletest.validateModule(module,verbose))
-
-        
-
-        # TODO: this should also check for method arguments
-        if not (inspect.isfunction(getattr(module,'main'))):
-            return 'no main method ( def main(...) ).'
-    
-        # TODO: check for CMD list, help and description
-
-        return module
+        if unittest['valid']:
+            return module, unittest
+        else:
+            return None, unittest
     
     def load(self,name,verbose=False):
         '''
@@ -75,21 +81,29 @@ class ModuleLoader():
         module.
         '''
 
+        result = emptyResult()
+
+        if self.modules.extra(name):
+            result['errors'] == [['Load module','module with name "%s" already loaded.' % name]]
+            return None, result
+
         module, result = self.validateModule(name,verbose)
         # injecting depcendencies
-        if (inspect.ismodule(module)):
+        if (inspect.ismodule(module)) and result['valid']:
             for coremodule in module.require:
                 if coremodule is 'presist':
                     vars(module)['presist'] = presist.Presist(module,module.presist)
                     module.presist.load()
                 else:
                     vars(module)[coremodule] = self.modules.mcore[coremodule]
+            return module, result
 
         else:
-            try: del sys.modules[name]
-            except: ''' do nothing '''
-
-        return module, result
+            try:
+                del sys.modules['module.extra.' + name]
+            except: 
+                ''' do nothing '''
+            return None, result
 
 
 class DynamicLoad():
@@ -114,30 +128,33 @@ class DynamicLoad():
         Load a module based on its name. 
         Will validate it using the ModuleLoader.
         
-        return (True, module)     if successful
-        return (False, errorMSG)  if unsuccessful
+        return (Module, unittest)   if successful
+        return (None,   unittest)   if unsuccessful
         '''
 
-        if not (self.mloader.modules.extra(name)):
-            module, result = self.mloader.load(name, verbose)
+        result = emptyResult()
 
-            if (inspect.ismodule(module) and result[0]):
-                
-                if (self.mloader.modules.isCmd(module)):
-                    for cmd in module.cmd:
-                        self.mloader.modules.cmdlist[cmd] = module
+        if  self.mloader.modules.extra(name):
+            result['errors'] == [['Load module','module with name "%s" already loaded.' % name]]
+            return None, result
+    
+        
+        module, result = self.mloader.validateModule(name,verbose)
+        # injecting depcendencies
+        if (inspect.ismodule(module)) and result['valid']:
+ 
+            if 'cmd' in module.listen:
+                for cmd in module.cmd:
+                    self.mloader.modules.cmdlist[cmd] = module
 
-                self.mloader.modules.mextra.append(module)
-                return (module,result)
-            else:
-                try: del sys.modules['module.extra.' + name]
-                except: ''' do nothing '''
-                return (False,result)
+            self.mloader.modules.mextra.append(module)
+            return (module,result)
         else:
-            errors = [['Loading module','Error: Module with that name already loaded.']]
-
-            return (None,(False, (0,0), errors, None, None))
-
+            try:
+                del sys.modules['module.extra.' + name]
+            except: 
+                ''' do nothing '''
+            return None, result
 
     def unload(self,name):
         '''
@@ -149,12 +166,15 @@ class DynamicLoad():
 
         mod = self.mloader.modules.extra(name)
         if (mod):
+            try: 
+                del sys.modules['module.extra.' + name]
+            except: 
+                return (False, 'Could not unimport "module.extra.%s" module from python runtime.' % name)
             self.mloader.modules.mextra.remove(mod)
-            try: del sys.modules['module.extra.' + name]
-            except: ''' nothing ''' 
-            return (True,(True, (1,1), None, None, None))
+            return (True, 'Module "%s" unloaded.' % name)
+        
         else:
-            return (None,(False, (0,0), [['Reloading module','Error: no such module.']], None, None))
+            return (False, 'Could not find module %s.' % name)
 
 
     def reloadm(self,name):
@@ -167,17 +187,16 @@ class DynamicLoad():
 
         unload = self.unload(name)
         if (unload[0]):
-            loaded, result = self.load(name)
-            if (loaded):
-                return '%s/%s tests passed. Module %s reloaded.' % (result[1][1][0],result[1][1][1], name)
+            module, result = self.load(name)
+            if inspect.ismodule(module) and result['valid']:
+                return module, result
             else:
-                return result
+                return None, result
         else:
-            status = (0,0)
-            errors = [['Loading module','Error no such module "%s".' % name]]
+            result = emptyResult()
+            result['errors'] = [[unload[1]]]
 
-            return (None,(False, status, errors, None, None))
-    
+            return None, result 
 
     def download(self,url,verbose=False):
         ''' 
@@ -191,56 +210,49 @@ class DynamicLoad():
         response = None
         html = None
 
-         
+
         try: 
             response = urllib2.urlopen(url)
             html = response.readlines()
-        except: return ('Error: Could not read file from URL')
+        except: 
+            result = emptyResult()
+            result['errors'] =  [['Download module','error: could not read file from URL.']]
+            return None, result
 
         try:
             f = open('module/extra/tmp_module.py','w')
             for line in html:
                 f.write(line)
             f.close()
-
         except:
-            errors = [['Download module','error: could not write to tempfile']]
-            return (None,(False, (0,0), errors, None, None))
-    
-        #def validateModule(self,name):
-        tmpimport, result = self.mloader.validateModule('tmp_module',verbose)
-        tmpmod = None
-        if (inspect.ismodule(tmpimport)):
-            tmpmod = tmpimport
-            name = tmpmod.name
-            version = tmpmod.version
-            require = ", ".join(tmpmod.require)
-            listen = ", ".join(tmpmod.listen)
-        else:
+            result = emptyResult()
+            result['errors'] =  [['Download module','error: could not write to tempfile']]
             return None, result
 
+        #def validateModule(self,name):
+        module, result = self.mloader.validateModule('tmp_module',verbose)
+        
+        if inspect.ismodule(module) and result['valid']:
+            try:
+                f = open('module/extra/%s.py' % module.name,'w')
+                for line in html:
+                    f.write(line)
+                f.close()
+            except: 
+                result = emptyResult()
+                result['errors'] = [['Download module','error: could not write module to module/extra/%s.py.' % name]]
+                return None, result
 
-        extra_info = []
-        try: extra_info.append("Author: %s" % tmpmod.author)
-        except: extra_info.append("Author: uknown")
-        try: extra_info.append("url: %s" % tmpmod.url)
-        except: extra_info.append("url: unknown")
-
-        extra_info = ", ".join(extra_info)
-       
-        try:
-            f = open('module/extra/%s.py' % name,'w')
-            for line in html:
-                f.write(line)
-            f.close()
-        except: 
-            status = (0,0)
-            errors = [['Downloading module','could not write module to module/extra/%s.py.' % name]]
-
-            return (None,(False, status, errors, None, None))
+        else:
+            try: 
+                del sys.modules['module.extra.tmp_module']
+            except:
+                print ' ++ Could not clean up tmp_module import'
+            return None, result
 
         os.remove('module/extra/tmp_module.py')
 
-        #self.load(name)
-        return tmpmod, result
+        print ' .. Module "%s" downloaded from %s' (module.name, url)
+
+        return module, result
         
