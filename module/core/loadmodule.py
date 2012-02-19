@@ -58,13 +58,13 @@ class ModuleLoader():
         try: 
             module = __import__("module.extra." + name)
             module = sys.modules["module.extra." + name]
-        except: 
-            result['errors'] = [['Loading module',('no such module "%s", or errors syntax errors.' % name)]]
+        except Exception as error: 
+            result['errors'] = [['Loading module',('%s error [%s]' % (name,str(error)))]]
             return (None, result)
-        #try:
-        #    reload(sys.modules['module.extra.%s' + name])
-        #except:
-        #    ''' Do nothing '''
+        try:
+            reload(sys.modules['module.extra.%s' + name])
+        except:
+            ''' Do nothing '''
 
         unittest = moduletest.validateModule(module,verbose) 
 
@@ -87,9 +87,14 @@ class ModuleLoader():
             result['errors'] == [['Load module','module with name "%s" already loaded.' % name]]
             return None, result
 
+
         module, result = self.validateModule(name,verbose)
         # injecting depcendencies
         if (inspect.ismodule(module)) and result['valid']:
+            if 'cmd' in module.listen:
+                for cmd in module.cmd:
+                    self.modules.cmdlist[cmd] = module
+
             for coremodule in module.require:
                 if coremodule is 'presist':
                     vars(module)['presist'] = presist.Presist(module,module.presist)
@@ -146,6 +151,13 @@ class DynamicLoad():
             if 'cmd' in module.listen:
                 for cmd in module.cmd:
                     self.mloader.modules.cmdlist[cmd] = module
+
+            for coremodule in module.require:
+                if coremodule is 'presist':
+                    vars(module)['presist'] = presist.Presist(module,module.presist)
+                    module.presist.load()
+                else:
+                    vars(module)[coremodule] = self.mloader.modules.mcore[coremodule]
 
             self.mloader.modules.mextra.append(module)
             return (module,result)
@@ -250,9 +262,9 @@ class DynamicLoad():
                 print ' ++ Could not clean up tmp_module import'
             return None, result
 
+        print ' .. Module "%s" downloaded from %s' % (module.name, url)
         os.remove('module/extra/tmp_module.py')
 
-        print ' .. Module "%s" downloaded from %s' (module.name, url)
 
         return module, result
         

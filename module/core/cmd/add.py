@@ -7,6 +7,9 @@ def main(modules, data):
     channel       = data['channel']
     communication = modules.mcore['communication']
     auth          = modules.mcore['auth']
+    user          = data['nick']
+    ident         = data['ident']
+    host          = data['host']
 
     if argv:
         auth.isLevel(user,ident,host,1)

@@ -8,8 +8,8 @@ server  = 'efnet.port80.se'
 #server  = 'holmes.freenode.net'
 #server  = 'irc.choopa.net'
 #server  = 'irc.homelien.no'
-channel  = '#informatikk'
-#channel = '#brbot'
+#channel  = '#informatikk'
+channel = '#brbot'
 port    = 6667
 
 '''

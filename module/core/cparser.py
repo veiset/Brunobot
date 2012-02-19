@@ -79,10 +79,10 @@ class Parser():
 
         if not coreCmd:
             cmdModules = self.modules.listening('cmd')
-            
+            print cmdModules 
             try:
                 module = self.modules.cmdlist[data['cmd']]
-
+                print module
                 if module:
                     try: 
                         thread.start_new_thread(module.main, (data, ) )

@@ -3,6 +3,7 @@ __email__   = 'veiset@gmail.com'
 __license__ = 'GPL'
 
 import os
+import sys, traceback
 
         
 class CoreCMD():
@@ -82,9 +83,12 @@ class CoreCMD():
         elif cmd in self.cmd:
             try:
                 self.cmd[cmd].main(self.modules, data)
-            except:
+            except Exception as error:
                 print ' !! Module [%s] in corecmd failed.' % cmd
-
+                print error
+                print '-'*60
+                traceback.print_exc(file=sys.stdout)
+                print '-'*60
             return True
 
         return False
