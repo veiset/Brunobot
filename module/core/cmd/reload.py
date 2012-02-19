@@ -9,6 +9,6 @@ def main(modules, data):
 
     if argv:
         msg = modules.dynamicLoader.reloadm(argv[0])
-        communication.say(channel,'reloaded?')
+        communication.say(channel,'reloaded.')
 
 

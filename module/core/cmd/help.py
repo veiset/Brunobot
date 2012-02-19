@@ -21,3 +21,5 @@ def main(modules, data):
             if (modules.isCmd(extra)):
                 communication.say(channel, " Listens to:  %s." % (", ".join(extra.cmd)))
 
+        communication.say(channel, " Module %s not loaded as module.extra. Try: cmd <cmd> for help on core cmds." % argv[0])
+

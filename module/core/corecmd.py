@@ -3,7 +3,9 @@ __email__   = 'veiset@gmail.com'
 __license__ = 'GPL'
 
 import os
-import sys, traceback
+import sys 
+import traceback
+import inspect
 
         
 class CoreCMD():
@@ -19,38 +21,57 @@ class CoreCMD():
         self.communication = m.mcore['communication']
         #self.cmd = ['load','unload','reload','mod','download','help']
         self.auth = m.mcore['auth']
-        import module.core.cmd.mod
-        import module.core.cmd.help
-        import module.core.cmd.load
-        import module.core.cmd.unload
-        import module.core.cmd.reload
-        import module.core.cmd.download
-        import module.core.cmd.listmod
-        import module.core.cmd.list
-        import module.core.cmd.add
-        self.cmd = {'mod'      : module.core.cmd.mod, 
-                    'help'     : module.core.cmd.help,
-                    'load'     : module.core.cmd.load,
-                    'unload'   : module.core.cmd.unload,
-                    'reload'   : module.core.cmd.reload,
-                    'download' : module.core.cmd.download,
-                    'listmod'  : module.core.cmd.listmod,
-                    'list'     : module.core.cmd.list,
-                    'add'      : module.core.cmd.add}
+        #import module.core.cmd.mod
+        #import module.core.cmd.help
+        #import module.core.cmd.load
+        #import module.core.cmd.unload
+        #import module.core.cmd.reload
+        #import module.core.cmd.download
+        #import module.core.cmd.listmod
+        #import module.core.cmd.list
+        #import module.core.cmd.add
+        #self.cmd = {'mod'      : module.core.cmd.mod, 
+        #            'help'     : module.core.cmd.help,
+        #            'load'     : module.core.cmd.load,
+        #            'unload'   : module.core.cmd.unload,
+        #            'reload'   : module.core.cmd.reload,
+        #            'download' : module.core.cmd.download,
+        #            'listmod'  : module.core.cmd.listmod,
+        #            'list'     : module.core.cmd.list,
+        #            'add'      : module.core.cmd.add}
+        self.cmd = {}
+        self.load_cmds()
 
     def load_cmds(self):
         ''' 
         Method for loading core commands from
         the module/core/cmd/ directory.
         '''
-        print "not yet implemented"
+        print " .. loading corecmd "
+        cmdlist = []
+        for m in os.listdir('module/core/cmd'):
+            if m[-3:] == '.py':
+                cmdlist.append(m[:-3])
 
-    def join(self,argv):
-        self.modules.mcore['connection'].irc.send('JOIN %s\r\n' % argv[0])
+        for module in self.cmd.keys():
+            try:
+                del sys.modules["module.core.cmd." + module]
+            except:
+                ''' Nothing serious '''
 
-    def part(self,argv):
-        self.modules.mcore['connection'].irc.send('PART %s\r\n' % argv[0])
-
+        self.cmd = {}
+        for mod in cmdlist:
+            if not mod == '__init__':
+                try:
+                    module = __import__("module.core.cmd." + mod)
+                    module = sys.modules["module.core.cmd." + mod]
+                    reload(module)
+                    for cmd_listen in module.cmd:
+                        self.cmd[cmd_listen] = module
+                except Exception as error:
+                    print '-'*60
+                    traceback.print_exc(file=sys.stdout)
+                    print '-'*60
 
 
     def parse_cmd(self,data):
@@ -74,12 +95,15 @@ class CoreCMD():
 
             return True
         elif cmd == 'reloadcmd':
-            try:
-                for module in self.cmd.values():
-                    reload(module)
-                self.communication.say(data['channel'], '%d core commands modules reloaded.' % len(self.cmd))
-            except:
-                self.communication.say(data['channel'], 'Warning: could not reload core command modules.')
+            self.load_cmds()
+            self.communication.say(data['channel'], '%d core commands modules reloaded.' % len(self.cmd))
+            return True
+
+        elif cmd == 'listcmd':
+            listofcmd = ", ".join(self.cmd.keys())
+            self.communication.say(data['channel'],
+                    'Found %d core commands: %s. (+ reloadcmd, cmd, listcmd)' % (len(self.cmd), listofcmd))
+
         elif cmd in self.cmd:
             try:
                 self.cmd[cmd].main(self.modules, data)

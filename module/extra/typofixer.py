@@ -77,7 +77,7 @@ def main(data):
             # message the user typed
             user = recentdata.user(nick,ident,host)
             #lastmsg = user.data[-2]
-            lastmsg = user.lastMsg()
+            lastmsg = user.mostRecent()
             print lastmsg
 
             typo = correctMe(lastmsg['msg'],correct)

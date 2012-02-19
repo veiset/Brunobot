@@ -1,4 +1,4 @@
-cmd         = ['load']
+cmd         = ['add']
 usage       = 'add <level> <nick> <ident> <host>'
 description = 'Adds a user to a permission group (owner/admin/user).'
 
