@@ -45,7 +45,7 @@ IDENT = '[^\r\n@ ]+'
 '''
 :nick!ident@host PRIVMSG channel :text
 '''
-MSG = ':(%s)!(%s)@([A-Za-z0-9\-\.]+) PRIVMSG (%s) :(.*)' % (NICK, IDENT, CHAN)
+MSG = ':(%s)!(%s)@([A-Za-z0-9\-\./]+) PRIVMSG (%s) :(.*)' % (NICK, IDENT, CHAN)
 
 '''
 From RFC 2812:
