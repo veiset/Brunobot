@@ -7,7 +7,8 @@ import regex
 import re
 import time
 import config as cfg
-import thread
+#import thread
+import threadedmanager 
 
 class Parser():
     '''
@@ -26,6 +27,9 @@ class Parser():
         self.modules = modules
         breader = BufferReader(self)
         breader.start()
+        self.threadmanager = threadedmanager.ThreadedManager()
+        self.threadmanager.setCommunication(self.communication)
+        self.threadmanager.start()
 
 
     def parse(self, line):
@@ -85,8 +89,10 @@ class Parser():
                 print module
                 if module:
                     try: 
-                        thread.start_new_thread(module.main, (data, ) )
-                    except: 
+                        self.threadmanager.runModule(module, data)
+                        #thread.start_new_thread(module.main, (data, ) )
+                    except Exception as error:
+                        print error
                         print " !! Module '%s %s' failed to run." % (module.name, module.version)
 
                     if self.modules.requires(module,'presist'):
@@ -117,10 +123,10 @@ class Parser():
                 'channel' :channel, 
                 'msg'     :message}
 
-        # TODO: each should be in a new thread
         for module in privModules:
             try: 
-                thread.start_new_thread(module.main, (data, ) )
+                self.threadmanager.runModule(module, data)
+                #thread.start_new_thread(module.main, (data, ) )
             except: 
                 print " !! Module '%s %s' failed to run correctly." % (module.name,module.version)
         
@@ -149,7 +155,7 @@ class BufferReader(threading.Thread):
                 self.parser.parse(line)
 
                 #print ":::: buffer->", self.buffr
-
+            
             time.sleep(0.1)
              
 
