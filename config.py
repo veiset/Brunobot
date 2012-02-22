@@ -1,7 +1,7 @@
 '''
 Connection variables
 '''
-nick    = 'brunbo2vz'
+nick    = 'brunffuu'
 ident   = 'botvz'
 name    = 'brunobot'
 #server  = 'efnet.port80.se'
