@@ -2,8 +2,7 @@ import time
 import threading
 
 module_max_duration = 5
-prio_list = {'wiki' : 0,
-             'urltitle' : 0}
+prio_list = { }
 
 class ThreadModule(threading.Thread):
 
