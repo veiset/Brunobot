@@ -2,7 +2,7 @@ import time
 import multiprocessing
 import threading
 
-module_max_duration = 5
+module_max_duration = 3
 prio_list = { }
 
 class ThreadModule(multiprocessing.Process):
@@ -25,7 +25,6 @@ class ThreadModule(multiprocessing.Process):
 class ThreadedManager(threading.Thread):
     proccesses = []
     running = True
-    message_queue = []
 
     def stop(self):
         self.running = False
@@ -50,12 +49,13 @@ class ThreadedManager(threading.Thread):
                     max_duration = prio_list[proc.module.name]
                 else:
                     max_duration = module_max_duration
+                
+                if not proc.is_alive():
+                    self.proccesses.remove(proc)
 
-                if duration >= max_duration:
+                elif duration >= max_duration:
                     self.communication.say(proc.data['channel'], 
-                            'Running took to long (limit=%ds).' % max_duration)
-                    self.message_queue.append([proc.module,
-                        "Forced remove. %d of %d secs run. [%s]" % (duration, max_duration, proc.name)])
+                            'Running of %s took too long (limit=%ds).' % (proc.module.name, max_duration))
 
                     proc.stop()
                     self.proccesses.remove(proc)

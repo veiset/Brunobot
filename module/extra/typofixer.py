@@ -1,6 +1,6 @@
 import sys
 ''' Required for Brunobot module'''
-version     = '3.2'
+version     = '4.0'
 name        = 'typofixer'
 author      = 'Vegard Veiset' # optional
 url         = 'http://veiset.org/svn/bruno/module/typo.py' # optional
@@ -9,41 +9,88 @@ listen      = ['channel','privmsg']
 description = 'correct a typo from the last sentence a user wrote'
 usage       = '*correctWord' 
 
-def distance(word1, word2):
-    # Memeory optimization
-    if len(word1) < len(word2): 
-        return distance(word2, word1)
-    if not word1:
-        return len(word2)
+def distance(s1, s2):
+    ''' 
+    distance() -> levenshtein distance between two strings
+    
+    Keyword arguments:
+    s1 -- string one
+    s2 -- string two
+    '''
+
+    if len(s1) < len(s2):
+        return distance(s2, s1)
+    if not s1:
+        return len(s2)
  
-    row = range(len(word2) + 1)
-    for i, c1 in enumerate(word1):
+    row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
         current = [i + 1]
 
-        for j, c2 in enumerate(word2):
+        for j, c2 in enumerate(s2):
             # find the min cost of deletion, insertion and substitution
             current.append(min(row[j+1]+1, current[j]+1, row[j]+(c1 != c2)))
 
         row = current
  
     return row[-1]
-           
-def estimateTypo(sentence,typo):
-    winner = [sys.maxint,None]
 
-    for word in sentence.split():
-        dist = distance(word,typo)
-        if (0 < dist < winner[0]):
-            winner = [dist,word]
 
-    return winner[1]
+def sentenceDist(sentence, typo):
+    ''' 
+    sentenceDist() -> the best match against all the sentence combinations
+                      
 
-def fixTypo(sentence,typo,match):
-    if (match == None): return sentence
-    else: return sentence.replace(match,typo,1)
+    Keyword arguments:
+    s1  --  Sentence to match against 
+    s2  --  Flagged typo 
+    '''
+    
+    words = sentence.split(' ')
+    results = []
 
-def correctMe(sentence,typo):
-    return fixTypo(sentence,typo,estimateTypo(sentence,typo))
+    for start in range(len(words)):
+
+        for end in range(start,len(words)+1):
+            suggestedFix = " ".join(words[start:end])
+            dist = distance(typo, suggestedFix)
+
+            # assuming spaces aren't a part of the edit distance
+            dist = dist - (end-start)
+            if not distance == 0:
+                results.append([dist, suggestedFix])
+
+    results.sort()
+    
+    if results:
+        return sentence.replace(results[0][1], typo, 1)
+    else:
+        return None
+
+
+def estimateTypo(sentence, typo):
+    ''' 
+    estimateTypo -> corrected sentence
+    
+    Keyword arguments:
+    sentence -- orginal sentence
+    typo     -- the typo correction
+    '''
+
+    if len(typo.split()) > 1:
+        return sentenceDist(sentence, typo)
+    else:
+        winner = [sys.maxint, None]
+
+        for word in sentence.split():
+            dist = distance(word, typo)
+            if (0 < dist < winner[0]):
+                winner = [dist, word]
+
+        if winner[1]:
+            return sentence.replace(winner[1], typo, 1)          
+        else: 
+            return None
 
 def main(data):
     '''
@@ -53,6 +100,7 @@ def main(data):
     is done by the core-parser (cparser) on privmsg and
     channel activities as definde by the listen list.
     '''
+
     nick = data['nick']
     ident = data['ident']
     host = data['host']
@@ -77,10 +125,9 @@ def main(data):
             # message the user typed
             user = recentdata.user(nick,ident,host)
             #lastmsg = user.data[-2]
-            lastmsg = user.mostRecent()
-            print lastmsg
+            lastmsg = user.lastMsg()
 
-            typo = correctMe(lastmsg['msg'],correct)
+            typo = estimateTypo(lastmsg['msg'],correct)
             if (typo):
                 # Using the injected communication object to send messages
                 # to the IRC server

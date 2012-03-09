@@ -50,7 +50,7 @@ class CoreCMD():
         print " .. loading corecmd "
         cmdlist = []
         for m in os.listdir('module/core/cmd'):
-            if m[-3:] == '.py':
+            if m[-3:] == '.py' and not m == '__init__.py':
                 cmdlist.append(m[:-3])
 
         for module in self.cmd.keys():
