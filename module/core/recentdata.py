@@ -3,7 +3,6 @@ __email__   = 'veiset@gmail.com'
 __license__ = 'GPL'
 
 import time
-import config as cfg
 class UserData():
 
     def __init__(self,nick,ident,host):
@@ -26,7 +25,7 @@ class Data():
 
     def __init__(self):
         self.users = {}
-        self.userhost = cfg.userhost
+        self.userhost = lambda a,b,c: a+"!"+b+"@"+c
 
     def store(self,nick,ident,host,channel,message):
 

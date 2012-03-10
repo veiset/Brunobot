@@ -36,5 +36,4 @@ def main(data):
             header = readHTMLHeader(title)
             if header:
                 header = header.replace('\n','').replace('  ','').strip() 
-                print header
                 communication.say(data['channel'], '[%s]' % header)

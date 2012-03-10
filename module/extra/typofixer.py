@@ -107,8 +107,6 @@ def main(data):
     channel = data['channel']
     message = data['msg']
 
-    print message
-
     correct = False
     # Ensuring that the message to correct is long enough
     if (len(message) > 1):

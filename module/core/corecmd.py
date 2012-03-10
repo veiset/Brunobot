@@ -19,26 +19,8 @@ class CoreCMD():
     def __init__(self, m):
         self.modules = m
         self.communication = m.mcore['communication']
-        #self.cmd = ['load','unload','reload','mod','download','help']
         self.auth = m.mcore['auth']
-        #import module.core.cmd.mod
-        #import module.core.cmd.help
-        #import module.core.cmd.load
-        #import module.core.cmd.unload
-        #import module.core.cmd.reload
-        #import module.core.cmd.download
-        #import module.core.cmd.listmod
-        #import module.core.cmd.list
-        #import module.core.cmd.add
-        #self.cmd = {'mod'      : module.core.cmd.mod, 
-        #            'help'     : module.core.cmd.help,
-        #            'load'     : module.core.cmd.load,
-        #            'unload'   : module.core.cmd.unload,
-        #            'reload'   : module.core.cmd.reload,
-        #            'download' : module.core.cmd.download,
-        #            'listmod'  : module.core.cmd.listmod,
-        #            'list'     : module.core.cmd.list,
-        #            'add'      : module.core.cmd.add}
+        self.cfg  = m.mcore['cfg']
         self.cmd = {}
         self.load_cmds()
 
@@ -96,6 +78,8 @@ class CoreCMD():
         elif cmd == 'reloadcmd':
             self.load_cmds()
             self.communication.say(data['channel'], '%d core commands modules reloaded.' % len(self.cmd))
+            self.cfg.load()
+            print " .. Reloaded core commands and config file."
             return True
 
         elif cmd == 'listcmd':

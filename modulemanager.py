@@ -27,9 +27,11 @@ class ModuleManager():
         self.cmdlist = {}
         
         self.loadCore()
+
         print ' .. Core modules loaded '
         for module in self.mcore:
             print ' .. ', module
+        print " "
 
         import module.core.loadmodule as loadmodule
         self.moduleLoader = loadmodule.ModuleLoader(self)
@@ -46,10 +48,6 @@ class ModuleManager():
 
         module, result = self.moduleLoader.load(name)
         if (inspect.ismodule(module)):
-            if (self.isCmd(module)):
-                for cmd in module.cmd:
-                    cmd[self.cmdlist] = module
-
             self.mextra.append(module)
 
     def loadCore(self):
@@ -67,9 +65,12 @@ class ModuleManager():
         import module.core.presist as presist
         import module.core.auth as auth
         import module.core.configmanager as cfg
+        import threadedmanager 
         
         self.cfg = cfg.BrunobotConfig()
         self.cfg.printConfig()
+
+        self.mcore['cfg'] = self.cfg
 
         self.mcore['connection'] = connection.Connection(
                 self.cfg.get('connection','nick'),
@@ -85,10 +86,17 @@ class ModuleManager():
 
         self.mcore['communication'] = communication.Communication(self.mcore['connection'])
         self.mcore['recentdata'] = recentdata.Data()
+
+        threadedmanager = threadedmanager.ThreadedManager()
+        threadedmanager.setCommunication(self.mcore['communication'])
+        threadedmanager.setConfig(self.mcore['cfg'])
+        self.mcore['threadmanager'] = threadedmanager
+
         self.mcore['parser'] = parser.Parser(self)
         self.mcore['corecmd'] = corecmd.CoreCMD(self)
         self.mcore['presist'] = {}
-        self.mcore['cfg'] = self.cfg
+
+
 
 
     def isCmd(self, module, keyword='cmd'):

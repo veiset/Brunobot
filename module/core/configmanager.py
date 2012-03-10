@@ -7,7 +7,10 @@ class BrunobotConfig():
         self.load()
 
     def get(self, section, variable):
-        return self.config.get(section, variable)
+        try:
+            return self.config.get(section, variable)
+        except:
+            return None
 
     def set(self, section, variable, content=None):
         if content:
@@ -15,8 +18,11 @@ class BrunobotConfig():
         else:
             self.config.set(section, variable)
 
+        self.save()
+
     def rem(self, section, variable):
         self.config.remove_option(section, variable)
+        self.save()
 
     def load(self):
         self.config.read(self.cfgfile)
@@ -42,7 +48,7 @@ class BrunobotConfig():
         for module in self.list('modules'):
             print " ..        module:   %s" % module
         print " .."
-        print " .. Confugration [owners]"
+        print " .. Configuration [owners]"
         for owner in self.list('owners'):
             user, ident, host = owner.replace(' ','').split(',')
             print " ..         owner:   %s!%s@%s" % (user, ident, host)

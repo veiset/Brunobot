@@ -53,9 +53,11 @@ class Connection():
         self.irc.send(u'NICK %s\n' % (self.nick))
         self.irc.send(u'USER %s %s bla :%s\n' % (self.ident, self.server, self.name))
 
-        print self.channels
         for channel in self.channels:
             self.irc.send(u'JOIN #%s\n' % channel)
+
+        print " .. Connected to %s" % self.server
+        print " "
 
         self.connected = True
         stayawake = self.StayAwake(self)

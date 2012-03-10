@@ -127,6 +127,7 @@ class DynamicLoad():
         '''
 
         self.mloader = moduleloader
+        self.cfg = self.mloader.modules.mcore['cfg']
 
 
     def load(self,name, verbose=False):
@@ -161,6 +162,8 @@ class DynamicLoad():
                     vars(module)[coremodule] = self.mloader.modules.mcore[coremodule]
 
             self.mloader.modules.mextra.append(module)
+            self.cfg.set('modules','%s' % module.name)
+            print ' .. extra module loaded: %s %s' % (module.name, module.version)
             return (module,result)
         else:
             try:
@@ -179,11 +182,13 @@ class DynamicLoad():
 
         mod = self.mloader.modules.extra(name)
         if (mod):
+            self.cfg.rem('modules','%s' % mod.name)
             try: 
                 del sys.modules['module.extra.' + name]
             except: 
                 return (False, 'Could not unimport "module.extra.%s" module from python runtime.' % name)
             self.mloader.modules.mextra.remove(mod)
+            print " .. extra module unloaded: %s" % name
             return (True, 'Module "%s" unloaded.' % name)
         
         else:

@@ -6,9 +6,6 @@ import threading
 import regex
 import re
 import time
-import config as cfg
-#import thread
-import threadedmanager 
 
 class Parser():
     '''
@@ -24,11 +21,11 @@ class Parser():
 
         self.communication = modules.mcore['communication']
         self.recentdata = modules.mcore['recentdata']
+        self.cfg = modules.mcore['cfg']
         self.modules = modules
         breader = BufferReader(self)
         breader.start()
-        self.threadmanager = threadedmanager.ThreadedManager()
-        self.threadmanager.setCommunication(self.communication)
+        self.threadmanager = modules.mcore['threadmanager']
         self.threadmanager.start()
 
 
@@ -37,12 +34,14 @@ class Parser():
         Parse a line from the buffer, and decide what type
         of action it represents. 
         '''
-
+        
+        if self.cfg.get('output','usertext').lower() in ('true','1','yes'):
+            print " -- %s" % line
         #print ":::: parse->",line
         privmatch = re.match(regex.MSG, line)
 
         if privmatch != None:
-            if (privmatch.group(5)[0] == cfg.command_prefix \
+            if (privmatch.group(5)[0] == self.cfg.get('module','prefix') \
                     and len(privmatch.group(5)) > 2):
                 self.parsecmd(privmatch.group(1), \
                         privmatch.group(2), \
