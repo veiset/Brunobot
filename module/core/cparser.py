@@ -83,10 +83,9 @@ class Parser():
 
         if not coreCmd:
             cmdModules = self.modules.listening('cmd')
-            print cmdModules 
             try:
                 module = self.modules.cmdlist[data['cmd']]
-                print module
+                print " .. running: ", module
                 if module:
                     try: 
                         self.threadmanager.runModule(module, data)
@@ -131,7 +130,6 @@ class Parser():
                 print " !! Module '%s %s' failed to run correctly." % (module.name,module.version)
         
             if self.modules.requires(module,'presist'):
-                print 'Module presist!'
                 module.presist.save()
 
         self.recentdata.store(nick,ident,host,channel,message)

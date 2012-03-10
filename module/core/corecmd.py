@@ -47,7 +47,6 @@ class CoreCMD():
         Method for loading core commands from
         the module/core/cmd/ directory.
         '''
-        print " .. loading corecmd "
         cmdlist = []
         for m in os.listdir('module/core/cmd'):
             if m[-3:] == '.py' and not m == '__init__.py':

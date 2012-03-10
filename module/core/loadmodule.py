@@ -101,6 +101,7 @@ class ModuleLoader():
                     module.presist.load()
                 else:
                     vars(module)[coremodule] = self.modules.mcore[coremodule]
+            print ' .. extra module loaded: %s %s' % (module.name, module.version)
             return module, result
 
         else:

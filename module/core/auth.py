@@ -1,4 +1,3 @@
-import config as cfg
 '''
 
 Userlevels
@@ -91,25 +90,21 @@ class AuthUser():
 
 class Auth():
 
-    def __init__(self):
+    def __init__(self, owners, admins):
         self.users = []
         try:
-            for owner in cfg.owner:
-                user = owner[0]
-                ident = owner[1]
-                host = owner[2]
+            for owner in owners:
+                user, ident, host = owner.replace(' ','').split(',')
                 self.addUser(user,ident,host,1)
         except:
-            print '!! No owner(s) of the bot defined.'
+            print ' !! No owner(s) of the bot defined.'
 
         try:
-            for admin in cfg.admin:
-                user = admin[0]
-                ident = admin[1]
-                host = admin[2]
+            for admin in admins:
+                user, ident, host = admin.replace(' ','').split(',')
                 self.addUser(user,ident,host,2)
         except:
-            print '! Warning: No owners found.'
+            print ' ++ Warning: No owners found.'
 
     def resolve(self,user,ident,host):
         for u in self.users:
@@ -120,11 +115,11 @@ class Auth():
         return None
 
     def addUser(self,user,ident,host,level):
-        if (user == '' or user == '*'):
+        if (user == '' or user == '*' or user.lower() == 'none'):
             user = None
-        if (ident == '' or ident == '*'):
+        if (ident == '' or ident == '*' or user.lower() == 'none'):
             ident = None
-        if (host == '' or host == '*'):
+        if (host == '' or host == '*' or user.lower() == 'none'):
             host = None
 
         self.users.append(AuthUser(user,ident,host,level))
@@ -156,7 +151,6 @@ class Auth():
     def isOwner(self,user,ident,host):
         m = self.isLevel(user,ident,host,1)
         if m and m.level == 1:
-            print 'Is Owner'
             return True
         return False
 

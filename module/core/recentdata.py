@@ -29,7 +29,6 @@ class Data():
         self.userhost = cfg.userhost
 
     def store(self,nick,ident,host,channel,message):
-        print self.userhost(nick,ident,host)
 
         if (self.userhost(nick,ident,host) not in self.users):
             self.users[self.userhost(nick,ident,host)] = UserData(nick,ident,host)

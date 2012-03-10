@@ -2,7 +2,6 @@ __author__  = 'Vegard Veiset'
 __email__   = 'veiset@gmail.com'
 __license__ = 'GPL'
 
-import config as cfg
 import inspect
 class ModuleManager():
     '''
@@ -23,16 +22,20 @@ class ModuleManager():
         self.mcore = {}
         self.mextra = []
         self.mplugin = []
+        self.cfg = ''
 
         self.cmdlist = {}
         
         self.loadCore()
+        print ' .. Core modules loaded '
+        for module in self.mcore:
+            print ' .. ', module
 
         import module.core.loadmodule as loadmodule
         self.moduleLoader = loadmodule.ModuleLoader(self)
         self.dynamicLoader = loadmodule.DynamicLoad(self.moduleLoader)
 
-        for module in cfg.modules_extra:
+        for module in self.cfg.list('modules'):
             self.loadModule(module)
 
 
@@ -47,10 +50,7 @@ class ModuleManager():
                 for cmd in module.cmd:
                     cmd[self.cmdlist] = module
 
-            print ' .. Loaded module %s %s' % (module.name, module.version) 
             self.mextra.append(module)
-        else:
-            print " !! could not load module with name: %s" % name
 
     def loadCore(self):
         '''
@@ -66,18 +66,30 @@ class ModuleManager():
         import module.core.corecmd as corecmd
         import module.core.presist as presist
         import module.core.auth as auth
+        import module.core.configmanager as cfg
+        
+        self.cfg = cfg.BrunobotConfig()
+        self.cfg.printConfig()
 
         self.mcore['connection'] = connection.Connection(
-                cfg.nick,
-                cfg.ident,
-                cfg.name)
+                self.cfg.get('connection','nick'),
+                self.cfg.get('connection','ident'),
+                self.cfg.get('connection','name'),
+                self.cfg.get('connection','server'),
+                int(self.cfg.get('connection','port')),
+                self.cfg.list('channels'))
         
-        self.mcore['auth'] = auth.Auth()
+        self.mcore['auth'] = auth.Auth(
+                self.cfg.list('owners'),
+                self.cfg.list('admins'))
+
         self.mcore['communication'] = communication.Communication(self.mcore['connection'])
         self.mcore['recentdata'] = recentdata.Data()
         self.mcore['parser'] = parser.Parser(self)
         self.mcore['corecmd'] = corecmd.CoreCMD(self)
         self.mcore['presist'] = {}
+        self.mcore['cfg'] = self.cfg
+
 
     def isCmd(self, module, keyword='cmd'):
         if not (inspect.ismodule(module)):
@@ -88,8 +100,7 @@ class ModuleManager():
             for listen in module.listen:
                 if listen == keyword:
                     return True
-        except:
-            print ' ++ isCmd() - no such module '
+        except: ''' ++ isCmd() - no such module '''
 
         return False
 

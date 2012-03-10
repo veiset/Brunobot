@@ -19,9 +19,9 @@ class Presist():
                 try:
                     vars(self.module)[var] = self.data[var]
                 except:
-                    print '!!!! Failed to load presistence: %s [%s]' % (self.module.name, var)
+                    print ' !! Failed to load presistence: %s [%s]' % (self.module.name, var)
         except:
-            print '!!!! Could not load presistence data file'
+            print ' !! Could not load presistence data file'
 
 
     def save(self):
@@ -32,5 +32,4 @@ class Presist():
             output = open('presistence/%s_%s.dat' % (self.module.name, self.module.version),'w')
             pickle.dump(self.data, output)
             output.close()
-        except:
-            print 'What'
+        except: ''' Could not save '''

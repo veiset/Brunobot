@@ -40,7 +40,7 @@ class ThreadedManager(threading.Thread):
         t.start()
 
     def run(self):
-        print 'Threaded Module Manager started.'
+
         while self.running:
             for proc in self.proccesses:
                 duration = proc.duration()
@@ -62,33 +62,3 @@ class ThreadedManager(threading.Thread):
 
             time.sleep(0.3)
 
-class T1():
-    ''' Test class 1 '''
-    def __init__(self, name):
-        self.name = name
-
-    def main(self, data):
-        while True:
-            print self.name
-            time.sleep(1)
-class T2():
-    ''' Test class 2 '''
-    def __init__(self, name):
-        self.name = name
-
-    def main(self, data):
-        while True:
-            print self.name
-            time.sleep(1)
-
-def test():
-    tc = ThreadedManager()
-    tc.start()
-
-    w = T1('test')
-    tc.runModule(w, {'name' : 'test'})
-
-    for i in range(10):
-        w = T2(i)
-        tc.runModule(w, {'name' : '%s' % str(i)})
-        time.sleep(0.2)

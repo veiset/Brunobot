@@ -13,7 +13,6 @@ import string
 import threading
 import time
 import regex
-import config as cfg
 
 
 class Connection():
@@ -22,7 +21,7 @@ class Connection():
     '''
     
     
-    def __init__(self, nick, ident, name):
+    def __init__(self, nick, ident, name, server, port, channels):
         '''
         Construct a connection ready to connect to an IRC server.
         
@@ -34,10 +33,11 @@ class Connection():
         self.nick = nick
         self.ident = ident
         self.name = name
-        
+        self.server = server
+        self.port = port
+        self.channels = channels
+
         self.irc = None
-        self.server = ""
-        self.port = 0
 
         # Incomming message buffer
         self.ircbuffer = []
@@ -46,15 +46,17 @@ class Connection():
         
     
     
-    def connect(self, server, port):
-        self.server = server
-        self.port = port
+    def connect(self):
         
         self.irc = socket.socket()
-        self.irc.connect((server, port))
+        self.irc.connect((self.server, self.port))
         self.irc.send(u'NICK %s\n' % (self.nick))
-        self.irc.send(u'USER %s %s bla :%s\n' % (self.ident, server, self.name))
-        self.irc.send(u'JOIN %s\n' % cfg.channel)
+        self.irc.send(u'USER %s %s bla :%s\n' % (self.ident, self.server, self.name))
+
+        print self.channels
+        for channel in self.channels:
+            self.irc.send(u'JOIN #%s\n' % channel)
+
         self.connected = True
         stayawake = self.StayAwake(self)
         stayawake.start()
