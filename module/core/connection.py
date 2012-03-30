@@ -14,6 +14,7 @@ import threading
 import time
 import regex
 
+from module.core.output import out
 
 class Connection():
     '''
@@ -60,9 +61,9 @@ class Connection():
         if self.ipaddr:
             try: 
                 self.irc.bind((self.ipaddr, self.port))
-                print " .. bound IP-address: %s " % self.ipaddr
+                out.info("bound IP-address: %s " % self.ipaddr)
             except: 
-                print " ++ could not bind IP-address: %s " % self.ipaddr
+                out.warn("could not bind IP-address: %s " % self.ipaddr)
 
 
         self.irc.connect((self.server, self.port))
@@ -72,8 +73,8 @@ class Connection():
         for channel in self.channels:
             self.irc.send(u'JOIN #%s\n' % channel)
 
-        print " .. Connected to %s" % self.server
-        print " "
+        out.info("Connected to %s" % self.server)
+        out.newline()
 
         self.connected = True
         stayawake = self.StayAwake(self)

@@ -4,6 +4,8 @@ __license__ = 'GPL'
 
 import inspect
 import thread
+from module.core.output import out
+
 class ModuleManager():
     '''
     The ModuleManager manages the core modules
@@ -25,14 +27,23 @@ class ModuleManager():
         self.mplugin = []
         self.cfg = ''
 
+        import module.core.configmanager as cfg
+
+        self.cfg = cfg.BrunobotConfig()
+        self.cfg.printConfig()
+        self.mcore['cfg'] = self.cfg
+
+        # setting configuration for the output object
+        out.setcfg(self.mcore['cfg'])
+
         self.cmdlist = {}
         
         self.loadCore()
 
-        print ' .. Core modules loaded '
+        out.info('Core modules loaded ')
         for module in self.mcore:
-            print ' .. ', module
-        print " "
+            out.info('%s' % module)
+        out.raw("")
 
         import module.core.loadmodule as loadmodule
         self.moduleLoader = loadmodule.DynamicLoad(self)
@@ -64,13 +75,8 @@ class ModuleManager():
         import module.core.corecmd as corecmd
         import module.core.presist as presist
         import module.core.auth as auth
-        import module.core.configmanager as cfg
         import threadedmanager 
         
-        self.cfg = cfg.BrunobotConfig()
-        self.cfg.printConfig()
-
-        self.mcore['cfg'] = self.cfg
 
         self.mcore['connection'] = connection.Connection(
                 self.cfg.get('connection','nick'),

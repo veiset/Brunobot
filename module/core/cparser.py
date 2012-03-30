@@ -7,6 +7,8 @@ import regex
 import re
 import time
 
+from module.core.output import out
+
 class Parser():
     '''
     The core parser of the brunobot. 
@@ -35,8 +37,7 @@ class Parser():
         of action it represents. 
         '''
         
-        if self.cfg.get('output','usertext').lower() in ('true','1','yes'):
-            print " -- %s" % line
+        out.verbose("%s" % line)
         #print ":::: parse->",line
         privmatch = re.match(regex.MSG, line)
 
@@ -84,20 +85,20 @@ class Parser():
             cmdModules = self.modules.listening('cmd')
             try:
                 module = self.modules.cmdlist[data['cmd']]
-                print " .. running: ", module
+                out.info("running: %s" % module)
                 if module:
                     try: 
                         self.threadmanager.runModule(module, data)
                         #thread.start_new_thread(module.main, (data, ) )
                     except Exception as error:
-                        print error
-                        print " !! Module '%s %s' failed to run." % (module.name, module.version)
+                        out.verbose(error)
+                        out.error("Module '%s %s' failed to run." % (module.name, module.version))
 
                     if self.modules.requires(module,'presist'):
                         module.presist.save()
 
             except:
-                print " ++ could not find module that listens to %s." % data['cmd']
+                out.warn("could not find module that listens to %s." % data['cmd'])
 
 
 
@@ -126,7 +127,7 @@ class Parser():
                 self.threadmanager.runModule(module, data)
                 #thread.start_new_thread(module.main, (data, ) )
             except: 
-                print " !! Module '%s %s' failed to run correctly." % (module.name,module.version)
+                out.error("Module '%s %s' failed to run correctly." % (module.name,module.version))
         
             if self.modules.requires(module,'presist'):
                 module.presist.save()
@@ -151,8 +152,6 @@ class BufferReader(threading.Thread):
                 line = self.buffr.pop()
                 self.parser.parse(line)
 
-                #print ":::: buffer->", self.buffr
-            
             time.sleep(0.1)
              
 

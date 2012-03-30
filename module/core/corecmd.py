@@ -7,6 +7,7 @@ import sys
 import traceback
 import inspect
 
+from module.core.output import out
         
 class CoreCMD():
     '''
@@ -50,9 +51,11 @@ class CoreCMD():
                     for cmd_listen in module.cmd:
                         self.cmd[cmd_listen] = module
                 except Exception as error:
-                    print '-'*60
-                    traceback.print_exc(file=sys.stdout)
-                    print '-'*60
+                    #print '-'*60
+                    #traceback.print_exc(file=sys.stdout)
+                    #print '-'*60
+                    out.error("Module %s failed to run." % mod)
+                    out.verbose(error)
 
 
     def parse_cmd(self,data):
@@ -79,7 +82,7 @@ class CoreCMD():
             self.load_cmds()
             self.communication.say(data['channel'], '%d core commands modules reloaded.' % len(self.cmd))
             self.cfg.load()
-            print " .. Reloaded core commands and config file."
+            out.info("Reloaded core commands and config file.")
             return True
 
         elif cmd == 'listcmd':
@@ -91,11 +94,11 @@ class CoreCMD():
             try:
                 self.cmd[cmd].main(self.modules, data)
             except Exception as error:
-                print ' !! Module [%s] in corecmd failed.' % cmd
-                print error
-                print '-'*60
-                traceback.print_exc(file=sys.stdout)
-                print '-'*60
+                out.error('Module [%s] in corecmd failed.' % cmd)
+                out.verbose(error)
+                #print '-'*60
+                #traceback.print_exc(file=sys.stdout)
+                #print '-'*60
             return True
 
         return False

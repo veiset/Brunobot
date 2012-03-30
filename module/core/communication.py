@@ -4,6 +4,8 @@ __email__   = 'veiset@gmail.com'
 __license__ = 'GPL'
 
 import time
+from module.core.output import out
+
 class Communication():
 
     def __init__(self, connection):
