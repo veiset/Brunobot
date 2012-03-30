@@ -2,6 +2,8 @@ cmd         = ['config','cfg']
 usage       = 'config <set|rem|get|list> argv'
 description = 'Edits the configuration file.'
 
+from module.core.output import out
+
 def main(modules, data):
 
     argv    = data['argv']
@@ -35,10 +37,10 @@ def main(modules, data):
                     result = "set variable '%s = %s' in %s" % (argv[2], argv[3], argv[1])
            
                 communication.say(channel, result)
-                print " .. config: %s " % result
+                out.info("config: %s " % result)
 
             elif argv[0] == 'rem':
                 if len(argv) == 3:
                     cfg.rem(argv[1], argv[2])
                     communication.say(channel, "unset value '%s' in %s" % (argv[2], argv[1]))
-                    print " .. config: unset variable '%s' in %s" % (argv[2], argv[1])
+                    out.info("config: unset variable '%s' in %s" % (argv[2], argv[1]))

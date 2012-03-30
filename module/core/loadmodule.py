@@ -8,6 +8,7 @@ import urllib2
 import os 
 import presist
 import module.test.moduletest as moduletest
+from module.core.output import out
 
 def emptyResult():
     result = {'valid'      : False,
@@ -119,7 +120,7 @@ class DynamicLoad():
 
             self.modules.mextra.append(module)
             self.cfg.set('modules','%s' % module.name)
-            print ' .. extra module loaded: %s %s' % (module.name, module.version)
+            out.info('extra module loaded: %s %s' % (module.name, module.version))
 
             return (module,result)
         else:
@@ -145,7 +146,7 @@ class DynamicLoad():
             except: 
                 return (False, 'Could not unimport "module.extra.%s" module from python runtime.' % name)
             self.modules.mextra.remove(mod)
-            print " .. extra module unloaded: %s" % name
+            out.info("extra module unloaded: %s" % name)
             return (True, 'Module "%s" unloaded.' % name)
         
         else:
@@ -222,10 +223,10 @@ class DynamicLoad():
             try: 
                 del sys.modules['module.extra.tmp_module']
             except:
-                print ' ++ Could not clean up tmp_module import'
+                out.warn('Could not clean up tmp_module import')
             return None, result
 
-        print ' .. Module "%s" downloaded from %s' % (module.name, url)
+        out.info('Module "%s" downloaded from %s' % (module.name, url))
         os.remove('module/extra/tmp_module.py')
 
 

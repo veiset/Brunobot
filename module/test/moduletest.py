@@ -4,6 +4,8 @@ import inspect
 import testcases as tests
 import pastebin
 
+from module.core.output import out
+
 class TestLogger():
     '''
     Impelementing the same function as sys.stdout, and
@@ -96,7 +98,7 @@ def validateModule(module, verbose=False):
                     if not coremodule == 'presist':
                         vars(module)[coremodule] = modules[coremodule]
             except:
-                print ' ++ moduletest.injectModule() - no module.require'
+                out.warn('moduletest.injectModule() - no module.require')
     
     
     def pretty(result):

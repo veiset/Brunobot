@@ -2,6 +2,8 @@ import time
 import multiprocessing
 import threading
 
+from module.core.output import out
+
 class ThreadModule(multiprocessing.Process):
 
     def stop(self):
@@ -61,7 +63,7 @@ class ThreadedManager(threading.Thread):
                 elif duration >= maxDuration:
                     self.communication.say(proc.data['channel'], 
                             'Running of %s took too long (limit=%ds).' % (proc.module.name, maxDuration))
-                    print ' ++ Running of %s took too long (limit=%ds)' % (proc.module.name, maxDuration)
+                    out.warn('Running of %s took too long (limit=%ds)' % (proc.module.name, maxDuration))
                     proc.stop()
                     self.proccesses.remove(proc)
 

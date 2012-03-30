@@ -1,8 +1,10 @@
+import ConfigParser
+from module.core.output import out
+
 class BrunobotConfig():
     cfgfile = 'config.conf'
 
     def __init__(self):
-        import ConfigParser
         self.config = ConfigParser.SafeConfigParser(allow_no_value=True)
         self.load()
 
@@ -35,33 +37,22 @@ class BrunobotConfig():
         return [key for (key,value) in self.config.items(section)]
     
     def printConfig(self):
-        print " .. Configuration [connection]"
-        print " ..        server:   %s (%s)" % (self.get('connection','server'),self.get('connection','port'))
-        print " ..          nick:   %s (%s, %s)" % (self.get('connection','nick'),
-                                            self.get('connection','ident'),
-                                            self.get('connection','name'))
-        print " ..      channels:   %s " % ", ".join(self.list('channels'))
-        print " .."
-        print " .. Configuration [module]"
-        print " ..  max_run_time:   %s" % (self.get('module','max_run_time')) 
-        print " ..        prefix:   %s" % (self.get('module','prefix')) 
+        out.info("Configuration [connection]")
+        out.info("       server:   %s (%s)" % (self.get('connection','server'),self.get('connection','port')))
+        out.info("         nick:   %s (%s, %s)" % (self.get('connection','nick'),
+                                 self.get('connection','ident'),
+                                 self.get('connection','name')))
+        out.info("     channels:   %s " % ", ".join(self.list('channels')))
+        out.newline()
+        out.info("Configuration [module]")
+        out.info(" max_run_time:   %s" % (self.get('module','max_run_time')))
+        out.info("       prefix:   %s" % (self.get('module','prefix')))
         for module in self.list('modules'):
-            print " ..        module:   %s" % module
-        print " .."
-        print " .. Configuration [owners]"
+            out.info("        module:   %s" % module)
+        out.newline()
+        out.info("Configuration [owners]")
         for owner in self.list('owners'):
             user, ident, host = owner.replace(' ','').split(',')
-            print " ..         owner:   %s!%s@%s" % (user, ident, host)
-        print " "
+            out.info("        owner:   %s!%s@%s" % (user, ident, host))
+        out.newline()
 
-
-#cfg = BrunobotConfig()
-#cfg.load()
-#print cfg.get('connection','nick')
-#cfg.add('modules','extra','test')
-#cfg.set('modules','cmdtest')
-#cfg.rem('modules','cmdtest')
-#print cfg.list('channels')
-#print cfg.list('modules')
-
-#cfg.save()

@@ -5,6 +5,8 @@ Userlevels
     2   Admin
     3   User
 '''
+from module.core.output import out
+
 class AuthUser():
     
     def __init__(self,user,ident,host,level):
@@ -97,14 +99,14 @@ class Auth():
                 user, ident, host = owner.replace(' ','').split(',')
                 self.addUser(user,ident,host,1)
         except:
-            print ' !! No owner(s) of the bot defined.'
+            out.error('No owner(s) of the bot defined.')
 
         try:
             for admin in admins:
                 user, ident, host = admin.replace(' ','').split(',')
                 self.addUser(user,ident,host,2)
         except:
-            print ' ++ Warning: No owners found.'
+            out.warn('No owners found.')
 
     def resolve(self,user,ident,host):
         for u in self.users:

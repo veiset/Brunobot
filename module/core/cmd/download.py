@@ -2,6 +2,7 @@ cmd         = ['download']
 usage       = 'download <url>'
 description = 'Downloads and tests a module located on the web.'
 import inspect
+from module.core.output import out
 
 def main(modules, data):
     argv          = data['argv']
@@ -23,10 +24,8 @@ def main(modules, data):
    
             communication.say(channel,'Running tests on module (might take some time)...')
    
-            print argv
+            out.verbose(argv)
             module, result = modules.moduleLoader.download(argv[0],verbose)
-            print "all good"
-
 
             valid          = result['valid']
             successful     = result['successful']

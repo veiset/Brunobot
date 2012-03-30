@@ -2,6 +2,8 @@ cmd         = ['join']
 usage       = 'join <channel>'
 description = 'Joins a new channel.'
 
+from module.core.output import out
+
 def main(modules, data):
     argv          = data['argv']
     channel       = data['channel']
@@ -19,7 +21,7 @@ def main(modules, data):
                 chan = argv[0]
                 connection.irc.send('JOIN %s\n' % chan)
                 communication.say(channel, 'Joining %s ...' % chan)
-                print ' .. joined channel: %s ' % chan
+                out.info('joined channel: %s ' % chan)
                 cfg.set('channels','%s' % chan[1:])
             except:
                 ''' Nothing '''

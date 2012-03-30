@@ -1,6 +1,8 @@
 import pickle
 import StringIO
 
+from module.core.output import out
+
 class Presist():
     
     def __init__(self,extra,variables):
@@ -19,9 +21,9 @@ class Presist():
                 try:
                     vars(self.module)[var] = self.data[var]
                 except:
-                    print ' !! Failed to load presistence: %s [%s]' % (self.module.name, var)
+                    out.error('Failed to load presistence: %s [%s]' % (self.module.name, var))
         except:
-            print ' !! Could not load presistence data file'
+            out.error('Could not load presistence data file')
 
 
     def save(self):
