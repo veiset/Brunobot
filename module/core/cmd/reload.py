@@ -8,7 +8,7 @@ def main(modules, data):
     communication = modules.mcore['communication']
 
     if argv:
-        msg = modules.dynamicLoader.reloadm(argv[0])
+        msg = modules.mloader.reloadm(argv[0])
         communication.say(channel,'reloaded.')
 
 
