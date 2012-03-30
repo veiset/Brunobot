@@ -24,7 +24,7 @@ def main(modules, data):
             communication.say(channel,'Running tests on module (might take some time)...')
    
             print argv
-            module, result = modules.dynamicLoader.download(argv[0],verbose)
+            module, result = modules.moduleLoader.download(argv[0],verbose)
             print "all good"
 
 

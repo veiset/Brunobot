@@ -26,7 +26,7 @@ def main(modules, data):
 
             communication.say(channel,'Running tests on module (might take some time)...')
 
-            module, result = modules.dynamicLoader.load(argv[0],verbose)
+            module, result = modules.moduleLoader.load(argv[0],verbose)
 
             valid          = result['valid']
             successful     = result['successful']

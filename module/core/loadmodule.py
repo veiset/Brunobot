@@ -19,20 +19,25 @@ def emptyResult():
 
     return result
 
-class ModuleLoader():
+class DynamicLoad():
     '''
-    ModuleLoader.
-    Validates a module to check if it contains  all the
+    Dynamic loader.
+
+    Takes user model name as userinput, and uses the 
+    ModuleLoader to load, reload, unload, and validate
+    that the model is in fact a brunobot plugin. 
+
+    Validates a module to check if it contains all the
     information required for it to be a brunobot plugin.
     It also check if the module to be loaded has a main
     method to be run when the corresponding action is 
     detected by the parser.
 
-    This module is to load module/extra plugins at the
-    start of the bot. 
+    This module is to load module/extra plugins for the
+    brunobot. 
     '''
 
-    def __init__(self,modules):
+    def __init__(self, modules):
         '''
         Require the moudle manager and use 
         the modules from it to validate the new
@@ -41,7 +46,7 @@ class ModuleLoader():
 
         self.modules = modules
         self.require_modules = modules.mcore.keys() # modules.mcore
-   
+        self.cfg = modules.mcore['cfg'] 
 
     def validateModule(self,name,verbose=False):
         '''
@@ -61,6 +66,7 @@ class ModuleLoader():
         except Exception as error: 
             result['errors'] = [['Loading module',('%s error [%s]' % (name,str(error)))]]
             return (None, result)
+
         try:
             reload(sys.modules['module.extra.%s' + name])
         except:
@@ -73,24 +79,33 @@ class ModuleLoader():
         else:
             return None, unittest
     
-    def load(self,name,verbose=False):
+
+
+    def load(self,name, verbose=False):
         '''
+        Load a module based on its name. 
+        Will validate it using the ModuleLoader.
+        
         Tries to validate the module based the name. 
         If the module is a valid module it will be injected
         with the required core modules asked for by the 
         module.
+
+        return (Module, unittest)   if successful
+        return (None,   unittest)   if unsuccessful
         '''
 
         result = emptyResult()
 
-        if self.modules.extra(name):
+        if  self.modules.extra(name):
             result['errors'] == [['Load module','module with name "%s" already loaded.' % name]]
             return None, result
-
-
+    
+        
         module, result = self.validateModule(name,verbose)
         # injecting depcendencies
         if (inspect.ismodule(module)) and result['valid']:
+ 
             if 'cmd' in module.listen:
                 for cmd in module.cmd:
                     self.modules.cmdlist[cmd] = module
@@ -101,69 +116,11 @@ class ModuleLoader():
                     module.presist.load()
                 else:
                     vars(module)[coremodule] = self.modules.mcore[coremodule]
-            print ' .. extra module loaded: %s %s' % (module.name, module.version)
-            return module, result
 
-        else:
-            try:
-                del sys.modules['module.extra.' + name]
-            except: 
-                ''' do nothing '''
-            return None, result
-
-
-class DynamicLoad():
-    '''
-    Dynamic loader.
-    Takes user model name as userinput, and uses the 
-    ModuleLoader to load, reload, unload, and validate
-    that the model is in fact a brunobot plugin. 
-    '''
-
-    def __init__(self, moduleloader):
-        '''
-        Keeps a referance to the module loader for
-        validating the modules that are to be loaded.
-        '''
-
-        self.mloader = moduleloader
-        self.cfg = self.mloader.modules.mcore['cfg']
-
-
-    def load(self,name, verbose=False):
-        '''
-        Load a module based on its name. 
-        Will validate it using the ModuleLoader.
-        
-        return (Module, unittest)   if successful
-        return (None,   unittest)   if unsuccessful
-        '''
-
-        result = emptyResult()
-
-        if  self.mloader.modules.extra(name):
-            result['errors'] == [['Load module','module with name "%s" already loaded.' % name]]
-            return None, result
-    
-        
-        module, result = self.mloader.validateModule(name,verbose)
-        # injecting depcendencies
-        if (inspect.ismodule(module)) and result['valid']:
- 
-            if 'cmd' in module.listen:
-                for cmd in module.cmd:
-                    self.mloader.modules.cmdlist[cmd] = module
-
-            for coremodule in module.require:
-                if coremodule is 'presist':
-                    vars(module)['presist'] = presist.Presist(module,module.presist)
-                    module.presist.load()
-                else:
-                    vars(module)[coremodule] = self.mloader.modules.mcore[coremodule]
-
-            self.mloader.modules.mextra.append(module)
+            self.modules.mextra.append(module)
             self.cfg.set('modules','%s' % module.name)
             print ' .. extra module loaded: %s %s' % (module.name, module.version)
+
             return (module,result)
         else:
             try:
@@ -180,14 +137,14 @@ class DynamicLoad():
         return (True, errorMSG)  if unsuccessful
         '''
 
-        mod = self.mloader.modules.extra(name)
+        mod = self.modules.extra(name)
         if (mod):
             self.cfg.rem('modules','%s' % mod.name)
             try: 
                 del sys.modules['module.extra.' + name]
             except: 
                 return (False, 'Could not unimport "module.extra.%s" module from python runtime.' % name)
-            self.mloader.modules.mextra.remove(mod)
+            self.modules.mextra.remove(mod)
             print " .. extra module unloaded: %s" % name
             return (True, 'Module "%s" unloaded.' % name)
         
@@ -248,7 +205,7 @@ class DynamicLoad():
             return None, result
 
         #def validateModule(self,name):
-        module, result = self.mloader.validateModule('tmp_module',verbose)
+        module, result = self.validateModule('tmp_module',verbose)
         
         if inspect.ismodule(module) and result['valid']:
             try:

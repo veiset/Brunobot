@@ -34,8 +34,7 @@ class ModuleManager():
         print " "
 
         import module.core.loadmodule as loadmodule
-        self.moduleLoader = loadmodule.ModuleLoader(self)
-        self.dynamicLoader = loadmodule.DynamicLoad(self.moduleLoader)
+        self.moduleLoader = loadmodule.DynamicLoad(self)
 
         for module in self.cfg.list('modules'):
             self.loadModule(module)
@@ -47,8 +46,8 @@ class ModuleManager():
         '''
 
         module, result = self.moduleLoader.load(name)
-        if (inspect.ismodule(module)):
-            self.mextra.append(module)
+        #if (inspect.ismodule(module)):
+        #    self.mextra.append(module)
 
     def loadCore(self):
         '''
