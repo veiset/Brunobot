@@ -3,6 +3,7 @@ __email__   = 'veiset@gmail.com'
 __license__ = 'GPL'
 
 import inspect
+import thread
 class ModuleManager():
     '''
     The ModuleManager manages the core modules
@@ -37,7 +38,7 @@ class ModuleManager():
         self.moduleLoader = loadmodule.DynamicLoad(self)
 
         for module in self.cfg.list('modules'):
-            self.loadModule(module)
+            thread.start_new_thread(self.loadModule, (module, ) )
 
 
     def loadModule(self,name):
