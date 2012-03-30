@@ -47,7 +47,7 @@ def main(data):
         a = " ".join(data['argv'])
         article = snippet(a)
         if article:
-            communication.say(data['channel'],article)
+            communication.say(data['channel'], article)
         else: 
             communication.say(data['channel'],'Could not find anything for "%s".' % a) 
 

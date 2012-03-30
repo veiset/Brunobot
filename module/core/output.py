@@ -6,6 +6,9 @@ class Output():
     def info(self, string):
         print "> .. %s" % string
 
+    def warn(self, string):
+        self.warning(string)
+
     def warning(self, string):
         print "> ++ %s" % string
 
