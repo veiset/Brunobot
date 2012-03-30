@@ -24,7 +24,7 @@ def main(modules, data):
         communication.say(channel,'No modules loaded.')
 
     for m in os.listdir('module/extra'):
-        if m[-3:] == '.py':
+        if m[-3:] == '.py' and not m == '__init__.py':
             unloaded.append(m[:-3])
     
     unloaded = list(set(unloaded).difference(set(loaded)))
