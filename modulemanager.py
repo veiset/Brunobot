@@ -78,7 +78,8 @@ class ModuleManager():
                 self.cfg.get('connection','name'),
                 self.cfg.get('connection','server'),
                 int(self.cfg.get('connection','port')),
-                self.cfg.list('channels'))
+                self.cfg.list('channels'),
+                self.cfg.get('connection','host'))
         
         self.mcore['auth'] = auth.Auth(
                 self.cfg.list('owners'),

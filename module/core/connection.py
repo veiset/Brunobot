@@ -21,14 +21,19 @@ class Connection():
     '''
     
     
-    def __init__(self, nick, ident, name, server, port, channels):
+    def __init__(self, nick, ident, name, server, port, channels, ipaddr=None):
         '''
         Construct a connection ready to connect to an IRC server.
         
         Keyword arguments:
-        nick  -- the bot's nickname
-        ident -- the bot's ident
-        name  -- the bot's real name
+        nick     -- the bot's nickname
+        ident    -- the bot's ident
+        name     -- the bot's real name
+        server   -- irc server to connect to
+        port     -- irc server port
+        channels -- a list of channels to join on connect
+        ipaddr   -- ipaddress to bind a host against (vhost)
+
         '''
         self.nick = nick
         self.ident = ident
@@ -36,6 +41,7 @@ class Connection():
         self.server = server
         self.port = port
         self.channels = channels
+        self.ipaddr = ipaddr 
 
         self.irc = None
 
@@ -49,6 +55,16 @@ class Connection():
     def connect(self):
         
         self.irc = socket.socket()
+
+        # Trying to bind vhost
+        if self.ipaddr:
+            try: 
+                self.irc.bind((self.ipaddr, self.port))
+                print " .. bound IP-address: %s " % self.ipaddr
+            except: 
+                print " ++ could not bind IP-address: %s " % self.ipaddr
+
+
         self.irc.connect((self.server, self.port))
         self.irc.send(u'NICK %s\n' % (self.nick))
         self.irc.send(u'USER %s %s bla :%s\n' % (self.ident, self.server, self.name))
