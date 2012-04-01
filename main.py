@@ -17,10 +17,8 @@ brunobot = Brunobot()
 
 
 # Enabling the bot to be quitted by ^C (control-c)
-running = True
-while running:
+while brunobot.modules.enabled:
     try:
         time.sleep(0.3)
     except KeyboardInterrupt:
         brunobot.modules.quit()
-        running = False

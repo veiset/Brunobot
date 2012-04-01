@@ -22,6 +22,8 @@ class ModuleManager():
         extra modules defined in the config file (config.py).
         '''
 
+        self.enabled = True
+
         self.mcore = {}
         self.mextra = []
         self.mplugin = []
@@ -58,6 +60,7 @@ class ModuleManager():
         self.mcore['connection'].quit()
         self.mcore['parser'].breader.running = False
         self.mcore['threadmanager'].stop()
+        self.enabled = False
 
     def loadModule(self,name):
         '''
