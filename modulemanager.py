@@ -19,7 +19,7 @@ class ModuleManager():
     def __init__(self):
         '''
         Load the core modules, as well as the user defined
-        extra modules defined in the config file (config.py).
+        extra modules defined in the config file (config.conf).
         '''
 
         self.enabled = True
@@ -27,6 +27,7 @@ class ModuleManager():
         self.mcore = {}
         self.mextra = []
         self.mplugin = []
+        self.cmdlist = {}
         self.cfg = ''
 
         import module.core.configmanager as cfg
@@ -38,14 +39,12 @@ class ModuleManager():
         # setting configuration for the output object
         out.setcfg(self.mcore['cfg'])
 
-        self.cmdlist = {}
-        
         self.loadCore()
 
         out.info('Core modules loaded ')
         for module in self.mcore:
             out.info('%s' % module)
-        out.raw("")
+        out.newline()
 
         import module.core.loadmodule as loadmodule
         self.moduleLoader = loadmodule.DynamicLoad(self)
@@ -56,6 +55,12 @@ class ModuleManager():
         
 
     def quit(self, message=None):
+        '''
+        quit(string)
+
+        Closes the IRC socket, and stops all the threads that are 
+        running making the program come to a natural stop.  
+        '''
         out.newline()
         self.mcore['connection'].quit()
         self.mcore['parser'].breader.running = False
@@ -68,13 +73,11 @@ class ModuleManager():
         '''
 
         module, result = self.moduleLoader.load(name)
-        #if (inspect.ismodule(module)):
-        #    self.mextra.append(module)
 
     def loadCore(self):
         '''
         Load the core modules required for the bot,
-        and passing referances to the core modules
+        and passing references to the core modules
         required for initializing them. 
         '''
 
@@ -117,6 +120,17 @@ class ModuleManager():
 
 
     def isCmd(self, module, keyword='cmd'):
+        '''
+        isCmd(object, string) -> bool
+
+        Checking if a modules listens to a keyword, when no
+        keyword is defined it checks if it listens to 'cmd'.
+
+        Keyword arguments:
+        module   -- brunobot extra module
+        keyword  -- keyword the module listens to 
+        '''
+
         if not (inspect.ismodule(module)):
             try: module = self.extra(module)
             except: ''' ++ Warning: isCmd() - no such module '''
@@ -130,6 +144,18 @@ class ModuleManager():
         return False
 
     def requires(self, module, keyword):
+        '''
+        requires(object, string) -> bool
+
+        Checking if a module requires a given keyword. The require
+        is defined in the extra module with the given variable:
+          require = [coremodule, ...]
+
+        Keyword arguments:
+        module   -- brunobot extra module
+        keyword  -- keyword to check if the module requires
+        '''
+
         if inspect.ismodule(module):
             for req in module.require:
                 if (req == keyword):
