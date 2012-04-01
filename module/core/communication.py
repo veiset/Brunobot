@@ -4,6 +4,8 @@ __email__   = 'veiset@gmail.com'
 __license__ = 'GPL'
 
 import time
+import textwrap
+
 from module.core.output import out
 
 class Communication():
@@ -39,20 +41,17 @@ class Communication():
         '''
             
         '''
-        :nick!ident@host PRIVMSG chan :text
+        :nick!ident@host PRIVMSG target :text
         
         TODO: 80 is just a temporary size. Should be the length of the
         bot's host. TODO: Check length before unicode.
         '''
-        noise = 16 + len(self.connection.nick) + len(target) + len(self.connection.ident) + 30
+        noise  = len(self.connection.nick) + len(self.connection.ident) + 80 
+        noise += len(target) 
+        noise += 9 # additional chars (:!@<space><space><space>:) and RC-LF
         
-        lines = message.split('\n')
+
+        lines = textwrap.wrap(message,512-noise)
         for line in lines:
-            # PRIVMSG chan :text\r\n
-            cmdlen = noise + len(line)
-            if cmdlen <= 512:
-                self.connection.irc.send('PRIVMSG %s :%s\n' % (target, line))
-            else:
-                splits = Connection.lensplit(line, 512 - noise)
-                for a in splits: self.say(target, a)
+            self.connection.irc.send('PRIVMSG %s :%s\n' % (target, line))
    
