@@ -51,6 +51,7 @@ class ModuleManager():
         for module in self.cfg.list('modules'):
             thread.start_new_thread(self.loadModule, (module, ) )
 
+        
 
     def quit(self, message=None):
         out.newline()

@@ -1,5 +1,7 @@
 import modulemanager
 
+import time
+
 class Brunobot():
 
     def __init__(self):
@@ -12,3 +14,13 @@ class Brunobot():
         self.connection.connect()
 
 brunobot = Brunobot()
+
+
+# Enabling the bot to be quitted by ^C (control-c)
+running = True
+while running:
+    try:
+        time.sleep(0.3)
+    except KeyboardInterrupt:
+        brunobot.modules.quit()
+        running = False
