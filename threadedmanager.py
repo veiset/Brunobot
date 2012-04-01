@@ -6,7 +6,7 @@ from module.core.output import out
 
 class ThreadModule(multiprocessing.Process):
     '''
-    Processing is used so that the modules can be terminated,
+    Processes are used so that the modules can be terminated,
     the problem with threads are that you cannot force termination
     of a module using threading. You can however terminate a 
     process, as described in the method stop(self).
