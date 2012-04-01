@@ -48,11 +48,15 @@ class Connection():
 
         # Incomming message buffer
         self.ircbuffer = []
-        
+       
+        self.connected = False 
+    
+    def quit(self,message=None):
         self.connected = False
-        
-    
-    
+        self.irc.send(u'QUIT \n')
+        self.irc.close()
+
+   
     def connect(self):
         
         self.irc = socket.socket()
@@ -108,8 +112,8 @@ class Connection():
             replies to PING requests from the IRC server.
             '''
             buffr = ''
-            
-            while True:
+
+            while self.parent.connected:
                 buffr += self.parent.irc.recv(1024)
                 temp = string.split(buffr, '\n')
                 buffr = temp.pop()
@@ -123,5 +127,8 @@ class Connection():
                     if pingmatch != None:
                         self.parent.irc.send('PONG %s\r\n' % \
                                              (pingmatch.group(1)))
-                    else:
-                        self.ircbuffer.append(line)
+
+                    self.ircbuffer.append(line)
+
+
+            out.info("Connection connection.StayAwake().run(self) terminated.")

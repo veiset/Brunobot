@@ -52,6 +52,12 @@ class ModuleManager():
             thread.start_new_thread(self.loadModule, (module, ) )
 
 
+    def quit(self, message=None):
+        out.newline()
+        self.mcore['connection'].quit()
+        self.mcore['parser'].breader.running = False
+        self.mcore['threadmanager'].stop()
+
     def loadModule(self,name):
         '''
         Load a module using the module loader. 

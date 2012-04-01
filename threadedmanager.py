@@ -68,4 +68,5 @@ class ThreadedManager(threading.Thread):
                     self.proccesses.remove(proc)
 
             time.sleep(0.3)
-
+        
+        out.info('ThreadedManager threadmanager.ThreadedManager().run(self) terminated.')

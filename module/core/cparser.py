@@ -25,8 +25,8 @@ class Parser():
         self.recentdata = modules.mcore['recentdata']
         self.cfg = modules.mcore['cfg']
         self.modules = modules
-        breader = BufferReader(self)
-        breader.start()
+        self.breader = BufferReader(self)
+        self.breader.start()
         self.threadmanager = modules.mcore['threadmanager']
         self.threadmanager.start()
 
@@ -139,6 +139,7 @@ class BufferReader(threading.Thread):
     '''
     BufferReader.
     '''
+    running = True
 
     def __init__(self, parser):
         self.parser = parser
@@ -147,11 +148,13 @@ class BufferReader(threading.Thread):
 
     def run(self):
         
-        while True:
+        while self.running:
+
             while len(self.buffr)>0:
                 line = self.buffr.pop()
                 self.parser.parse(line)
 
             time.sleep(0.1)
              
+        out.info("Core Parser cparser.BufferReader().run(self) terminated.")
 
