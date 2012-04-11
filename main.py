@@ -3,7 +3,6 @@ import modulemanager
 import time
 
 class Brunobot():
-
     def __init__(self):
         self.modules = modulemanager.ModuleManager()
 
