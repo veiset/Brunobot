@@ -46,7 +46,7 @@ class ThreadModule(multiprocessing.Process):
 
         self.module = module
         self.data = data
-
+        self.time = time.time()
     def duration(self):
         '''
         duration() -> integer

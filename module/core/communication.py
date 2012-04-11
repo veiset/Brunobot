@@ -23,13 +23,18 @@ class Communication():
         target  -- recipient of given message
         message -- message to send
         '''
-        try:
-            if type(message) is not unicode:
-                message = unicode(message,'utf-8')
-            if type(target) is not unicode:
-                target = unicode(target,'utf-8')
-        except:
-            out.error("could not convert to unicode")
+        if type(message) is not unicode:
+            try: message = unicode(message,'utf-8')
+            except:
+                out.warning("Could not convert message to unicode.")
+                try: message = message.encode('ascii')
+                except: out.warning("Could not convert message to ascii.")
+        if type(target) is not unicode:
+            try: target = unicode(target,'utf-8');
+            except:
+                out.warning("Could not convert target to unicode.")
+                try: target = target.encode('ascii')
+                except: out.warning("Could not convert target to ascii.")
         '''
         From RFC 1459:
         
