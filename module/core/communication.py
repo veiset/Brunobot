@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ Communicaton """
 __author__  = 'Vegard Veiset'
 __email__   = 'veiset@gmail.com'
@@ -23,18 +24,13 @@ class Communication():
         target  -- recipient of given message
         message -- message to send
         '''
-        if type(message) is not unicode:
-            try: message = unicode(message,'utf-8')
-            except:
-                out.warning("Could not convert message to unicode.")
-                try: message = message.encode('ascii')
-                except: out.warning("Could not convert message to ascii.")
-        if type(target) is not unicode:
-            try: target = unicode(target,'utf-8');
-            except:
-                out.warning("Could not convert target to unicode.")
-                try: target = target.encode('ascii')
-                except: out.warning("Could not convert target to ascii.")
+        try:
+            message = message.encode('utf-8', 'ignore')
+            target = target.encode('utf-8', 'ignore')
+        except:
+            out.warning("Could not encode message or target to unicode. Using ASCII instead.")
+            message = message.encode('ascii', 'ignore')
+            target = target.encode('ascii', 'ignore')
         '''
         From RFC 1459:
         
