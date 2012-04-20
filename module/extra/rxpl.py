@@ -15,7 +15,7 @@ def main(data):
     channel = data['channel']
     message = data['msg']
 
-    match = re.match('^s\/(.+?)\/(.+)/$',message)
+    match = re.match('^s\/(.+?)\/(.+)/g?$',message)
 
     if match:
         user = recentdata.user(nick,ident,host)
