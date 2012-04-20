@@ -9,16 +9,29 @@ class UserData():
         self.nick = nick
         self.ident = ident
         self.host = host
-        self.data = []
+        self.recent = []
+        self.log = {}
 
     def msg(self,channel,message):
-        self.data.append({'time' : time.time(), 'channel': channel, 'msg': message})
+        # should limit the size of recent and log to avoid to use
+        # too much memory when the bot is running for a long duration
+        t = time.time()
+        self.recent.append({'time' : t, 'channel': channel, 'msg': message})
+
+        if not channel in self.log:
+            self.log[channel] = []
+        self.log[channel].append([t, message])
 
     def lastMsg(self):
-        return self.data[-1]
+        return self.recent[-1]
 
     def mostRecent(self):
-        return self.data[-2]
+        return self.recent[-2]
+   
+    def channel(self, channel):
+        if channel in self.log:
+            return self.log[channel]
+        return None
 
 class Data(): 
    

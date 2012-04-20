@@ -42,19 +42,26 @@ class Parser():
         privmatch = re.match(regex.MSG, line)
 
         if privmatch != None:
+            text = privmatch.group(5)
+            if text is not unicode:
+                try:
+                    text = text.encode('utf-8', 'ignore')
+                except:
+                    pass
+
             if (privmatch.group(5)[0] == self.cfg.get('module','prefix') \
                     and len(privmatch.group(5)) > 2):
                 self.parsecmd(privmatch.group(1), \
                         privmatch.group(2), \
                         privmatch.group(3), \
                         privmatch.group(4), \
-                        unicode(privmatch.group(5)[1:],'utf-8'))
+                        text[1:])
             else:
                 self.parsepriv(privmatch.group(1), \
                         privmatch.group(2), \
                         privmatch.group(3), \
                         privmatch.group(4), \
-                        unicode(privmatch.group(5),'utf-8'))
+                        text)
 
 
     def parsecmd(self, nick, ident, host, channel, cmd):
