@@ -49,7 +49,10 @@ def main(data):
     if argv:
         expr = "".join(argv)
         if legalExpr(expr):
-            result = str(eval("".join(argv)))
+            try:
+                result = str(eval("".join(argv)))
+            except:
+                result = "error"
         else:
             result = "error"
 
