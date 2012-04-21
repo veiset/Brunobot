@@ -20,6 +20,14 @@ pythonMath = ['acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh',
               'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'trunc']
 
 class visitor(ast.NodeVisitor):
+    ''' 
+    Class for finding variables in an expression .
+    
+    >>> v = visitor()
+    >>> expr = ast.parse('5+sin(x)')
+    >>> v.visit(expr)
+    ['sin', 'x']
+    '''
 
     def visit_Module(self, node):
         self.functions = list()
@@ -33,6 +41,21 @@ class visitor(ast.NodeVisitor):
         self.functions.append(node.id)
 
 def legalExpr(expr):
+    '''
+    legalExpr(string) -> string/false
+
+    Checks an expression against the functions in pythons math
+    library and returns the expression if all variables
+    in the expression are functions in python.math. 
+
+    Will return the 'func.__doc__' if not parameters to
+    the function is given.
+
+    Keyword arguments:
+    expr -- mathematical expression
+
+    Return the expression if it is valid, false otherwise
+    '''
     expr = expr.lower()
     try:
         functions = visitor().visit(ast.parse(expr))
