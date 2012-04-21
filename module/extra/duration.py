@@ -12,9 +12,9 @@ require     = ['communication']
 listen      = ['cmd']
 cmd         = ['dur', 'duration', 'time', 'seconds']
 usage       = 'time 5000 seconds to hours minutes'
-description = 'Convert a given representation of a duration to another one \
-                                     using the time data from the grego \
-                                     rian calendar.'
+description = 'Convert a given representation of a duration to another one' \
+                                     + ' using the time data from the grego' \
+                                     + 'rian calendar.'
 
 # Using the Gregorian Calendar, we have that:
 millisecond = 1
