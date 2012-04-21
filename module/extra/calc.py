@@ -50,7 +50,7 @@ def main(data):
         expr = "".join(argv)
         if legalExpr(expr):
             try:
-                result = str(eval("".join(argv)))
+                result = str(eval(expr.lower()))
             except:
                 result = "error"
         else:
