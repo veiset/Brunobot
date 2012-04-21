@@ -39,6 +39,9 @@ def legalExpr(expr):
         for f in functions:
             if not f in pythonMath:
                 return False
+        if len(functions) == 1:
+            if len(function[0]) == len(expr):
+                return '%s.__doc__' % functions[0]
         return expr
     except:
         return False 
