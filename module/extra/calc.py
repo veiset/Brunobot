@@ -40,7 +40,7 @@ def legalExpr(expr):
             if not f in pythonMath:
                 return False
         if len(functions) == 1:
-            if len(function[0]) == len(expr):
+            if len(functions[0]) == len(expr):
                 return '%s.__doc__' % functions[0]
         return expr
     except:
@@ -50,8 +50,8 @@ def legalExpr(expr):
 def main(data):
     argv = data['argv']
     if argv:
-        expr = "".join(argv)
-        if legalExpr(expr):
+        expr = legalExpr("".join(argv))
+        if expr:
             try:
                 result = str(eval(expr.lower()))
             except:
