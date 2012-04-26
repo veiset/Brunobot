@@ -10,6 +10,8 @@ description = 'Calculates something something...'
 import ast
 from math import *
 
+# Allowed math functions. These functions are a part of the standard python
+# math library (math).
 # >>> import math
 # >>> pythonMath = dir(math)
 pythonMath = ['acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 
