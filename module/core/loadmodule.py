@@ -118,9 +118,11 @@ class DynamicLoad():
                 else:
                     vars(module)[coremodule] = self.modules.mcore[coremodule]
 
+            vars(module)['filename'] = name
+
             self.modules.mextra.append(module)
-            self.cfg.set('modules','%s' % module.name)
-            out.info('extra module loaded: %s %s' % (module.name, module.version))
+            self.cfg.set('modules','%s' % name)
+            out.info('extra module loaded: %s %s' % (name, module.version))
 
             return (module,result)
         else:
@@ -140,7 +142,7 @@ class DynamicLoad():
 
         mod = self.modules.extra(name)
         if (mod):
-            self.cfg.rem('modules','%s' % mod.name)
+            self.cfg.rem('modules','%s' % name)
             try: 
                 del sys.modules['module.extra.' + name]
             except: 
@@ -162,6 +164,7 @@ class DynamicLoad():
         '''
 
         unload = self.unload(name)
+
         if (unload[0]):
             module, result = self.load(name)
             if inspect.ismodule(module) and result['valid']:

@@ -14,8 +14,8 @@ def main(modules, data):
     loaded = []
     
     for mod in modules.mextra:
-        extra += "%s %s, " % (mod.name, mod.version)
-        loaded.append(mod.name)
+        extra += "%s %s, " % (mod.filename, mod.version)
+        loaded.append(mod.filename)
     
     if (len(extra)>1): 
         extra = extra[:-2]

@@ -196,7 +196,7 @@ class ModuleManager():
         '''
 
         for mod in self.mextra:
-            if mod.name == name:
+            if mod.filename == name:
                 return mod
         return None
 
