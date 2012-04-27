@@ -127,10 +127,13 @@ class ThreadedManager(threading.Thread):
         module   -- brunobot extra module with a module.main(data) method
         data     -- brunobot data dictionary object
         '''
-        t = ThreadModule()
-        t.setModule(module, data)
-        self.proccesses.append(t)
-        t.start()
+        try:
+            t = ThreadModule()
+            t.setModule(module, data)
+            self.proccesses.append(t)
+            t.start()
+        except:
+            out.error('Running of extra module "%s" failed.' % module.name)
 
     def run(self):
         '''
