@@ -63,6 +63,8 @@ class DynamicLoad():
         module = None
         try: 
             module = __import__("module.extra." + name)
+            # Getting the object reference from sys.modules, as
+            # the import reference wont work when calling methods on it.
             module = sys.modules["module.extra." + name]
         except Exception as error: 
             result['errors'] = [['Loading module',('%s error [%s]' % (name,str(error)))]]
