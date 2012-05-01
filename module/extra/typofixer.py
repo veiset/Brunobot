@@ -117,8 +117,9 @@ def main(data):
 
         elif (message[-1] == "*" and message[0] != "*"):
             correct = message[:-1]
+        
 
-        if correct:
+        if correct and correct.count("*") == 0:
             # Using the injected recentdata object to get the previous
             # message the user typed
             user = recentdata.user(nick,ident,host)
