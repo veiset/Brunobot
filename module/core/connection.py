@@ -53,8 +53,14 @@ class Connection():
     
     def quit(self,message=None):
         self.connected = False
-        self.irc.send(u'QUIT \n')
-        self.irc.close()
+        try:
+            self.irc.send(u'QUIT \n')
+        except:
+            out.warning('Could not communicate with IRC socket')
+        try:
+            self.irc.close()
+        except:
+            out.warning('Could not close the IRC socket. (Might already be closed)')
 
    
     def connect(self):
