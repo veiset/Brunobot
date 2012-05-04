@@ -34,7 +34,11 @@ class BrunobotConfig():
             self.config.write(configfile)
 
     def list(self, section):
-        return [key for (key,value) in self.config.items(section)]
+        try:
+            return [key for (key,value) in self.config.items(section)]
+        except:
+            return None
+
     
     def printConfig(self):
         out.info("Configuration [connection]")
