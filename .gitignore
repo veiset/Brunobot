@@ -1,0 +1,4 @@
+config.conf
+*~
+*.swp
+*.pyc
