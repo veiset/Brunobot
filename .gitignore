@@ -2,3 +2,4 @@ config.conf
 *~
 *.swp
 *.pyc
+*.db
