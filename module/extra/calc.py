@@ -14,7 +14,7 @@ from math import *
 # math library (math).
 # >>> import math
 # >>> pythonMath = dir(math)
-pythonMath = ['acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 
+pythonMath = ['min','max','abs','acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 
               'ceil', 'copysign', 'cos', 'cosh', 'degrees', 'e', 'erf', 
               'erfc', 'exp', 'expm1', 'fabs', 'factorial', 'floor', 'fmod',
               'frexp', 'fsum', 'gamma', 'hypot', 'isinf', 'isnan', 'ldexp',
