@@ -6,6 +6,7 @@ __author__ = 'Vegard Veiset'
 __license__ = 'GPL'
 __email__ = 'veiset@gmail.com'
 
+
 ''' Required for Brunobot Plugin'''
 version     = '0.1'
 name        = 'urltitle'
@@ -19,6 +20,7 @@ usage       = 'something <URL> something'
 from BeautifulSoup import BeautifulSoup
 from urllib2 import urlopen
 import re
+import data.htmlchr as htmlchr
 
 def readHTMLHeader(url):
     try:
@@ -40,4 +42,9 @@ def main(data):
                 header = header.replace("&lt;", "<")
                 header = header.replace("&gt;", ">")
                 header = header.replace("&amp;", "&")
+                for c in htmlchr.lookup:
+                    try:
+                        header = header.replace(c,htmlchr.lookup[c])
+                    except:
+                        ''' encoding '''
                 communication.say(data['channel'], '[%s]' % header)
