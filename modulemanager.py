@@ -71,7 +71,6 @@ class ModuleManager():
         '''
         Load a module using the module loader. 
         '''
-
         module, result = self.moduleLoader.load(name)
 
     def loadCore(self):
@@ -80,7 +79,6 @@ class ModuleManager():
         and passing references to the core modules
         required for initializing them. 
         '''
-
         import module.core.communication as communication
         import module.core.cparser as parser
         import module.core.connection as connection
