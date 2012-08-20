@@ -37,7 +37,7 @@ def main(data):
         html = readHTMLHeader("http://www.urbandictionary.com/define.php?term=%s" % " ".join(argv))
         if html:
             word, desc = html
-            if desc and word == " ".join(argv).lower():
+            if desc and word.lower() == " ".join(argv).lower():
                 communication.say(data['channel'], '%s: %s' % (" ".join(argv), desc))
             else:
                 communication.say(data['channel'], 'No match for %s.' % " ".join(argv))
