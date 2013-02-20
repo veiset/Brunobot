@@ -1,7 +1,3 @@
-import re
-import urllib.request
-from bs4 import BeautifulSoup
-
 class Module():
     ''' Resolves title of posted URLs '''
 
