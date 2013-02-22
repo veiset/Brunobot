@@ -8,6 +8,11 @@ class Brunobot():
         import module.urltitle.urltitle as urltitle
         urltitle.Module(self)
 
+        import module.autoop.autoop as autoop
+        ops = autoop.Module(self)
+        ops.add('#informatikk', '~vz@veiset.org')
+        
+
     def connect(self):
         self.irc.connect()
 
