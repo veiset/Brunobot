@@ -1,6 +1,6 @@
-
 class Users:
     
+
     def __init__(self, bot):
         self.bot = bot
         self.chans = {} #{'#informatikk': [('vz','@').('andern':'+')]}
