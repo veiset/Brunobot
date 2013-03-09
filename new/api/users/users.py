@@ -7,11 +7,12 @@ class Users:
         self.bot.irc.addListener("join", self.joinEvent)
         self.bot.irc.addListener("part", self.partEvent)
         self.bot.irc.addListener("mode", self.modeEvent)
-        self.bot.irc.addListiner("names", self.namesEvent)
+        self.bot.irc.addListener("names", self.namesEvent)
 
     def namesEvent(self, event):
         ''' '''
         print(event.get('users'))
+        
 
     def joinEvent(self, event):
         ''' '''
@@ -29,3 +30,4 @@ class Users:
         ''' '''
         if chan == "*":
             return "something" 
+
