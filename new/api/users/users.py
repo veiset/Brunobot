@@ -15,10 +15,20 @@ class Users:
         
 
     def joinEvent(self, event):
-        ''' '''
+        ''' Adds a user to the channel list when joining '''
+        chan = event.get('channel') 
+
+        if not chan in self.chans:
+            self.chans[chan] = {}
+
+        self.chans[chan][event.get('user')] = None
 
     def partEvent(self, event):
         ''' '''
+        chan = event.get('channel')
+
+        if chan in self.chans:
+            del self.chans[chan][event.get('user')]
         
     def modeEvent(self, event):
         ''' '''
