@@ -2,7 +2,6 @@ import unittest
 import api.users.users as users
 import test.mock as mock
 import test.mockdata as data
-from pyric.events import Event
 
 class UsersAPITest(unittest.TestCase):
     

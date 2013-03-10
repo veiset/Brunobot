@@ -21,7 +21,7 @@ class Users(BrunoAPI):
     FOUNDER  = 5
 
     def __init__(self, brunobot):
-        self.bot = brunobot
+        super().__init__(brunobot)
 
         self.channels = {} # {'#informatikk': [('vz','OP').('andern':'VOICE')]}
 
@@ -30,7 +30,6 @@ class Users(BrunoAPI):
         self.bot.irc.addListener("mode", self.modeEvent)
         self.bot.irc.addListener('353', self.namesEvent)
         
-        self.api = self.api()
         self.api.function(self.hasStatus)
         self.api.function(self.getUserStatus)
         self.api.function(self.getChannelList)
@@ -47,6 +46,8 @@ class Users(BrunoAPI):
         Example usage:
         >>> if hasStatus('#mychan', 'someNick', OP):
         >>>     print("The user is OPed")
+
+        return If the user on the channel has the given status
         '''
         if self.existsChannel(channel) and self.channelHasUser(channel, nick):
             return self.userHasStatus(channel, nick, status)
@@ -207,30 +208,8 @@ class Users(BrunoAPI):
 
 
 
-    ### Static methods
 
-    def getStatuslistFromNames(eventMsg):
-        ''' 
-        Parsing nicks and their given status from a list of names with
-        status symboles (e.g: "@user1 user2 +user3 user4").
-
-        Keyword arguments:
-        eventMsg -- pyric 353 event message
-
-        return (Users.STATUS, nick)
-        '''
-        users = []
-
-        for nick in Users.getUsersFrom353EventMsg(eventMsg):
-            if Users.hasStatusSymbol(nick):
-                status = Users.getStatusSymbolFromNick(nick)
-                nick = Users.stripStatusSymbol(nick)
-                users.append((status, nick))
-            else:
-                users.append((Users.REGULAR, nick))
-
-        return users
-
+    # Static methods
 
     def getModesFromEvent(eventMsg):
         '''
@@ -310,3 +289,24 @@ class Users(BrunoAPI):
     def getUsersFrom353EventMsg(eventMsg):
         return eventMsg.split(' ')
 
+    def getStatuslistFromNames(eventMsg):
+        ''' 
+        Parsing nicks and their given status from a list of names with
+        status symboles (e.g: "@user1 user2 +user3 user4").
+
+        Keyword arguments:
+        eventMsg -- pyric 353 event message
+
+        return (Users.STATUS, nick)
+        '''
+        users = []
+
+        for nick in Users.getUsersFrom353EventMsg(eventMsg):
+            if Users.hasStatusSymbol(nick):
+                status = Users.getStatusSymbolFromNick(nick)
+                nick = Users.stripStatusSymbol(nick)
+                users.append((status, nick))
+            else:
+                users.append((Users.REGULAR, nick))
+
+        return users

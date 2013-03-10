@@ -9,9 +9,10 @@ class Function():
 
 class BrunoAPI:
     
+    def __init__(self, brunobot):
+        self.bot = brunobot
+        self.api = self.API()
 
-    def api(self):
-        return self.API()
 
     class API:
         def __init__(self):
