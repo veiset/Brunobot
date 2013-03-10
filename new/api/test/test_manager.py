@@ -46,10 +46,36 @@ class ManagerAPITest(unittest.TestCase):
         self.mockapi().fun = myfun
 
         assert self.mockapi().fun() == 5
+        
+        if self.manager.isLoaded("mockapi"):
+            self.manager.reload("mockapi")
+            try:
+                self.mockapi().fun()
+                assert False
+            except:
+                assert True
+        else:
+            raise Exception("Class should be loaded, but is not.")
 
-        self.manager.reload("mockapi")
-        try:
-            self.mockapi().fun()
-            assert False
-        except:
-            assert True
+
+    def test_that_reloadall_reloads_all_modules(self):
+        self.manager.add("test.mockapi", "mockapi")
+        self.manager.load("mockapi")
+
+        self.mockapi = self.manager.get("mockapi")
+        
+        def myfun(): return 5
+        self.mockapi().fun = myfun
+
+        assert self.mockapi().fun() == 5
+        
+        if self.manager.isLoaded("mockapi"):
+            self.manager.reloadAll()
+            try:
+                self.mockapi().fun()
+                assert False
+            except:
+                assert True
+        else:
+            raise Exception("Class should be loaded, but is not.")
+
