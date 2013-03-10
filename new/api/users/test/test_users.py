@@ -7,7 +7,6 @@ class UsersAPITest(unittest.TestCase):
     
     def setUp(self):
         self.bot = mock.Bot()
-        self.bot.irc = mock.IRC()
         self.api = users.Users(self.bot)
     
 

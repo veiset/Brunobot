@@ -33,6 +33,16 @@ class Users(BrunoAPI):
         self.api.function(self.hasStatus)
         self.api.function(self.getUserStatus)
         self.api.function(self.getChannelList)
+        self.api.constants(
+            [
+                ('REGULAR', self.REGULAR),
+                ('VOICE', self.VOICE),
+                ('HALFOP', self.HALFOP),
+                ('OP', self.OP),
+                ('OWNER', self.OWNER),
+                ('FOUNDER', self.FOUNDER),
+            ]
+        )
 
     def hasStatus(self, channel, nick, status):
         '''
