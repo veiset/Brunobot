@@ -74,16 +74,15 @@ class UsersAPITest(unittest.TestCase):
     def test_that_listing_of_names_add_names_to_channel(self):
         event = data.event_353
         channel = data.channel
-
         event.add('msg', '~vz @vx %bo +an &br sm el')
 
         self.usersAPI.namesEvent(data.event_353)
         userlist = self.usersAPI.getUserlistFromChannel(channel)
 
         assert len(userlist) == 7
-
-        assert self.usersAPI.OWNER   in userlist['vz'] and len(userlist['vz']) == 2
-        assert self.usersAPI.ADMIN   in userlist['br'] and len(userlist['br']) == 2
+        # All the users have the status REGULAR
+        assert self.usersAPI.FOUNDER in userlist['vz'] and len(userlist['vz']) == 2
+        assert self.usersAPI.OWNER   in userlist['br'] and len(userlist['br']) == 2
         assert self.usersAPI.OP      in userlist['vx'] and len(userlist['vx']) == 2
         assert self.usersAPI.HALFOP  in userlist['bo'] and len(userlist['bo']) == 2
         assert self.usersAPI.VOICE   in userlist['an'] and len(userlist['an']) == 2

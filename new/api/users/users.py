@@ -1,25 +1,73 @@
+from api.base import API
+class Users(API):
+    ''' 
+    Brunobot API: Users
 
-class Users:
-    REGULAR    = 0
-    VOICE      = 1
-    HALFOP     = 2
-    OP         = 3
-    ADMIN      = 4
-    OWNER      = 5
+    API for getting a list of the users in a channel, and for checking
+    the status (op, voice...) of a given user in a channel.
+    '''
 
-    def __init__(self, bot):
+    REGULAR  = 0   
+    VOICE    = 1 
+    HALFOP   = 2 
+    OP       = 3
+    OWNER    = 4
+    FOUNDER  = 5
 
-        self.bot = bot
+    def __init__(self, brunobot):
+        self.bot = brunobot
         self.channels = {} # {'#informatikk': [('vz','OP').('andern':'VOICE')]}
-        self.users = {}    # {'vz' : ('~vz', 'veiset.org) ...}
 
         self.bot.irc.addListener("join", self.joinEvent)
         self.bot.irc.addListener("part", self.partEvent)
         self.bot.irc.addListener("mode", self.modeEvent)
         self.bot.irc.addListener('353', self.namesEvent)
+        
+        self.addAPI(self.hasStatus)
+        self.addAPI(self.getUserStatus)
+
+    def hasStatus(self, channel, nick, status):
+        '''
+        Example usage:
+        >>> if usersAPI.hasStatus('#mychan', 'someNick', usersAPI.OP):
+        >>>     print("The user is OPed")
+        '''
+        if self.existsChannel(channel) and self.channelHasUser(channel, user):
+            return self.userHasStatus(channel, nick, status)
+
+        return False
+
+
+    def getUserStatus(self, channel, nick):
+        '''
+        Looks up the status of a user in the given channel.
+        A user can have the following statuses: 
+        REGULAR, VOICE, HALFOP, OP, OWNER, FOUNDER
+
+        Example usage:
+        >>> if usersAPI.OP in usersAPI.getUserStatus('#mychan', 'someNick'):
+        >>>     print("The user is OPed")
+        
+        Keyword arguments:
+        channel -- IRC channel name
+        nick    -- IRC user nickname
+
+        return A list of statuses the user have
+        '''
+        if self.existsChannel(channel):
+            if self.channelHasUser(channel, nick):
+                return self.channels[channel][nick]
+                
+        return None
 
     def namesEvent(self, event):
-        ''' '''
+        ''' 
+        Takes an pyric 353 event (listing of IRC names) as an input and adds
+        the users to the given channel with corresponding status codes.
+
+        Keyword arguments:
+        event -- pyric 353 event
+        '''
         channel = event.get('channel')
         names = event.get('msg')
 
@@ -33,12 +81,11 @@ class Users:
             
             if not self.userHasStatus(channel, nick, status):
                 self.addUserStatus(channel, nick, status)
-            
-        
+
 
     def joinEvent(self, event):
         ''' 
-        Adds the user joining a channel to the channel list as a regular user
+        Adds a joining user to the channel list as a regular user.
         
         Keyword arguments:
         event -- pyric JOIN event
@@ -49,15 +96,12 @@ class Users:
         if not self.existsChannel(channel):
             self.addChannel(channel)
  
-        if not self.existsUser(nick):
-            self.addUser(nick, ident, host)
-        
         self.addUserToChannel(channel, nick, self.REGULAR)
 
 
     def partEvent(self, event):
         ''' 
-        Removes a parting user from the channel list
+        Removes a parting user from the channel list.
         
         Keyword arguments:
         event -- pyric PART event
@@ -69,35 +113,35 @@ class Users:
             self.removeUserFromChannel(channel, nick)
 
 
-        
     def modeEvent(self, event):
-        ''' '''
+        '''
+        Updates the status on users based on an IRC mode event (e.g: +o user).
+        
+        Keyword arguments:
+        event -- pyric MODE event
+        '''
         channel = event.get('channel')
-        nick, ident, host = event.get('user')
-
         modes = Users.getModesFromEvent(event.get('msg'))
-        for mode in modes: 
+        for isGiving, status, nick in modes: 
             if self.channelHasUser(channel, nick):
-                self.changeStatus(channel, mode)
+                self.changeStatus(channel, isGiving, status, nick)
 
 
-    def changeStatus(self, channel, mode):
-        ''' '''
-        add, status, nick = mode 
-        if add:
+    def changeStatus(self, channel, isGiving, status, nick):
+        '''
+        Changes status of an already existing user.
+
+        Keyword arguments:
+        channel  -- IRC channel name
+        isGiving -- Whether the status is given or taken
+        status   -- Users.STATUS code (OP, HALFOP, VOICE...)
+        nick     -- IRC nickname
+        '''
+        if isGiving: 
             if not self.userHasStatus(channel, nick, status):
                 self.addUserStatus(channel, nick, status)
-        else:
-            if self.userHasStatus(channel, nick, status):
-                self.removeUserStatus(channel, nick, status)
-
-
-    def getUserStatus(self, channel, nick):
-        if channel in self.channels:
-            if nick in self.channels[channel]:
-                return self.channels[channel][nick]
-                
-        return None
+        elif self.userHasStatus(channel, nick, status):
+            self.removeUserStatus(channel, nick, status)
 
 
     def addUserStatus(self, channel, nick, status):
@@ -118,14 +162,8 @@ class Users:
     def addUserToChannel(self, channel, nick, mode):
         self.channels[channel][nick] = [mode]
     
-    def addUser(self, nick, ident, host):
-        self.users[nick] = (ident, host)
-
     def addChannel(self, channel):
         self.channels[channel] = {}
-    
-    def existsUser(self, nick):
-        return nick in self.users
 
     def existsChannel(self, channel):
         return channel in self.channels
@@ -133,11 +171,14 @@ class Users:
     def getUserlistFromChannel(self, channel):
         return self.channels[channel]
 
+
+
     ### Static methods
 
     def getStatuslistFromNames(eventMsg):
         ''' 
-        Parsing IRC 353 event
+        Parsing nicks and their given status from a list of names with
+        status symboles (e.g: "@user1 user2 +user3 user4").
 
         Keyword arguments:
         eventMsg -- pyric 353 event message
@@ -159,7 +200,7 @@ class Users:
 
     def getModesFromEvent(eventMsg):
         '''
-        Parsing modes from MODE pyric events
+        Parsing modes from the MODE pyric event.
 
         Keyword arguments:
         eventMsg -- pyric MODE event message (e.g: '+o vz')
@@ -186,8 +227,37 @@ class Users:
         return userStatus
 
 
-    def stripStatusSymbol(user):
-        return user[1:]
+    def getStatusFromSymbol(symbol):
+        '''
+        Returns the status code for a given symbol
+
+        For an indepth explanation of symobls see:
+         http://wiki.gbatemp.net/wiki/IRC_Glossary
+        '''
+
+        if symbol == '+': return Users.VOICE
+        elif symbol == '%': return Users.HALFOP
+        elif symbol == '@': return Users.OP
+        elif symbol == '&': return Users.OWNER
+        elif symbol == '~': return Users.FOUNDER
+
+        return Users.REGULAR
+
+
+    def getStatusTypeFromLetter(letter):
+        '''
+        Returns the status code representation of a mode letter
+
+        For a list of IRC modes see:
+         http://webtoman.com/opera/panel/ircdmodes.html
+        '''
+
+        if letter == 'o': return Users.OP
+        elif letter == 'h': return Users.HALFOP
+        elif letter == 'v': return Users.VOICE
+        elif letter == 'q': return Users.OWNER
+        elif letter == 'a': return Users.FOUNDER
+
 
     def getStatusSymbolFromNick(nick):
         symbol = nick[0]
@@ -197,21 +267,12 @@ class Users:
         firstLetter = user[0]
         return Users.isStatusSymbol(firstLetter)
 
-    def getUsersFrom353EventMsg(eventMsg):
-        return eventMsg.split(' ')
-
     def isStatusSymbol(symbol):
         return symbol in '+%@&~'
 
-    def getStatusFromSymbol(symbol):
-        if symbol == '+': return Users.VOICE
-        elif symbol == '%': return Users.HALFOP
-        elif symbol == '@': return Users.OP
-        elif symbol == '&': return Users.ADMIN
-        elif symbol == '~': return Users.OWNER
-        else: return Users.REGULAR
+    def stripStatusSymbol(user):
+        return user[1:]
 
-    def getStatusTypeFromLetter(letter):
-        if letter == 'o': return Users.OP
-        if letter == 'v': return Users.VOICE
+    def getUsersFrom353EventMsg(eventMsg):
+        return eventMsg.split(' ')
 
