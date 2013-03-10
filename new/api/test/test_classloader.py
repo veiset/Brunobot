@@ -51,3 +51,11 @@ class ClassLoaderTest(unittest.TestCase):
         module = self.loader.get(modulePath)
 
         assert not module.var == "not default"
+
+    def test_that_loader_resolves_class(self):
+        modulePath = "test.mockclass"
+        self.loader.load(modulePath)
+        mockclass = self.loader.getClass(modulePath)
+        instanceOfClass = mockclass()
+
+        assert instanceOfClass.fun() == 'value'

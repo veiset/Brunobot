@@ -50,7 +50,7 @@ class SimpleAPI():
     
     def __init__(self, module):
         '''
-        Takes a brunobot API class and extract the API methods and constants.
+        Takes a brunobot API module and extract the API methods and constants.
         '''
         for function in module.api.fun:
             setattr(self, function.name, function.fun)

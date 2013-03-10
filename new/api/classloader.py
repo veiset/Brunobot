@@ -1,4 +1,5 @@
 import sys
+import inspect
 class Loader():
 
     def __init__(self):
@@ -21,3 +22,13 @@ class Loader():
     def unload(self, modulePath):
         del sys.modules[modulePath]
         del self.modules[modulePath]
+
+    def getClass(self, modulePath):
+        '''
+        Returns the first defined class of a module.
+        '''
+        module = self.get(modulePath)
+        for name, obj in inspect.getmembers(module):
+            if inspect.isclass(obj):
+                return obj
+        
