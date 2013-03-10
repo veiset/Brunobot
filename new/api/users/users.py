@@ -1,10 +1,16 @@
-from api.base import API
-class Users(API):
+from api.base import BrunoAPI
+class Users(BrunoAPI):
     ''' 
     Brunobot API: Users
 
     API for getting a list of the users in a channel, and for checking
     the status (op, voice...) of a given user in a channel.
+
+    API Methods:
+    hasStatus(channel, nick, status) -> boolean
+    getUserStatus(channel, nick) -> status
+    getChannelList(channel) -> List of (nick, status)
+
     '''
 
     REGULAR  = 0   
@@ -16,6 +22,7 @@ class Users(API):
 
     def __init__(self, brunobot):
         self.bot = brunobot
+
         self.channels = {} # {'#informatikk': [('vz','OP').('andern':'VOICE')]}
 
         self.bot.irc.addListener("join", self.joinEvent)
@@ -23,16 +30,25 @@ class Users(API):
         self.bot.irc.addListener("mode", self.modeEvent)
         self.bot.irc.addListener('353', self.namesEvent)
         
-        self.addAPI(self.hasStatus)
-        self.addAPI(self.getUserStatus)
+        self.api = self.api()
+        self.api.function(self.hasStatus)
+        self.api.function(self.getUserStatus)
+        self.api.function(self.getChannelList)
 
     def hasStatus(self, channel, nick, status):
         '''
+        Checks if a user has the given status.
+
+        Keyword arguments:
+        channel -- IRC channel name
+        nick    -- IRC user nickname
+        status  -- The status to check against
+
         Example usage:
-        >>> if usersAPI.hasStatus('#mychan', 'someNick', usersAPI.OP):
+        >>> if hasStatus('#mychan', 'someNick', OP):
         >>>     print("The user is OPed")
         '''
-        if self.existsChannel(channel) and self.channelHasUser(channel, user):
+        if self.existsChannel(channel) and self.channelHasUser(channel, nick):
             return self.userHasStatus(channel, nick, status)
 
         return False
@@ -44,20 +60,38 @@ class Users(API):
         A user can have the following statuses: 
         REGULAR, VOICE, HALFOP, OP, OWNER, FOUNDER
 
-        Example usage:
-        >>> if usersAPI.OP in usersAPI.getUserStatus('#mychan', 'someNick'):
-        >>>     print("The user is OPed")
-        
         Keyword arguments:
         channel -- IRC channel name
         nick    -- IRC user nickname
 
+        Example usage:
+        >>> if VOICE in getUserStatus('#mychan', 'someNick'):
+        >>>     print("The user is VOICEed")
+        
         return A list of statuses the user have
         '''
         if self.existsChannel(channel):
             if self.channelHasUser(channel, nick):
                 return self.channels[channel][nick]
                 
+        return None
+
+    def getChannelList(self, channel):
+        '''
+        Returns a list of (user, status) from a channel.
+
+        Keyword arguments:
+        channel -- IRC channel name
+
+        Example usage:
+        >>> for user, status in getChannelList('#mychan'):
+        >>>     print("%s has status %s", % (user, status))
+
+        retrun A list of (user, status)
+        '''
+        if self.existsChannel(channel):
+            return self.getUserlistFromChannel(channel)
+
         return None
 
     def namesEvent(self, event):

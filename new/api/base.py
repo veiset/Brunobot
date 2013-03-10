@@ -7,11 +7,27 @@ class Function():
         self.doc = fun.__doc__
         self.args = inspect.getargspec(fun).args
 
-class API:
+class BrunoAPI:
+    
 
-    def __init__(self, bot):
-        self.API = self
-        self.functions = []
+    def api(self):
+        return self.API()
 
-    def addAPI(self, fun):
-        self.functions.append(Function(fun))
+    class API:
+        def __init__(self):
+            self.functions = []
+
+        def function(self, fun):
+            ''' 
+            Keyword arguments:
+            fun -- Single function to be added as API function
+            '''
+            self.functions.append(Function(fun))
+
+        def functions(self, funs):
+            ''' 
+            Keyword arguments:
+            funs -- List of Functions to be added as API functions 
+            '''
+            for fun in funs:
+                self.functions.append(Function(fun))
