@@ -154,39 +154,9 @@ event_ping = Event(
         'recipient': None
     }
 )
-event_mode_voice = Event(
+event_mode = Event(
     {
         'msg': '+v vzbot', 
-        'user': user,
-        'type': 'MODE', 
-        'server': None, 
-        'channel': channel, 
-        'recipient': None
-    }
-)
-event_mode_devoice= Event(
-    {
-        'msg': '-v vzbot', 
-        'user': user,
-        'type': 'MODE', 
-        'server': None, 
-        'channel': channel, 
-        'recipient': None
-    }
-)
-event_mode_op = Event(
-    {
-        'msg': '+o vzbot', 
-        'user': user,
-        'type': 'MODE', 
-        'server': None, 
-        'channel': channel, 
-        'recipient': None
-    }
-)
-event_mode_deop = Event(
-    {
-        'msg': '-o vzbot', 
         'user': user,
         'type': 'MODE', 
         'server': None, 
