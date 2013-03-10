@@ -25,10 +25,10 @@ class Users(BrunoAPI):
 
         self.channels = {} # {'#informatikk': [('vz','OP').('andern':'VOICE')]}
 
-        self.bot.irc.addListener("join", self.joinEvent)
-        self.bot.irc.addListener("part", self.partEvent)
-        self.bot.irc.addListener("mode", self.modeEvent)
-        self.bot.irc.addListener('353', self.namesEvent)
+        self.addListener("join", self.joinEvent)
+        self.addListener("part", self.partEvent)
+        self.addListener("mode", self.modeEvent)
+        self.addListener('353', self.namesEvent)
         
         self.api.function(self.hasStatus)
         self.api.function(self.getUserStatus)

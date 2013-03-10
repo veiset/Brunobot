@@ -17,6 +17,20 @@ class BrunoAPI:
     def __init__(self, brunobot):
         self.bot = brunobot
         self.api = self.API()
+        self.listeners = []
+
+    def addListener(self, event, fun):
+        self.listeners.append((event,fun))
+        self.bot.irc.addListener(event, fun)
+    
+    def remListener(self, event, fun):
+        self.listeners.remove((event,fun))
+        self.bot.irc.removeListener(event, fun)
+
+    def unload(self):
+        for event, fun in self.listeners:
+            self.remListener(event, fun)
+        self.api = self.API() # empty API environment
 
 
     class API:
