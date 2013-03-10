@@ -37,3 +37,5 @@ class IRC:
 
     def disconnect(self):
         self.events.append(('disconnect'))
+
+
