@@ -134,6 +134,16 @@ event_322 = Event(
         'recipient': None,
     }
 )
+event_353 = Event(
+    {
+        'msg' : '~vz +brunobot @andern %Snuskotin barstruck &Prometheus brbot',
+        'user': None,
+        'type': '332',
+        'server': server,
+        'channel': channel,
+        'recipient': None,
+    }
+)
 event_privmsg = Event(
     {
         'msg': 'this is a test', 

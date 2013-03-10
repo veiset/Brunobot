@@ -20,7 +20,7 @@ class UsersAPITest(unittest.TestCase):
 
         assert data.channel in self.usersAPI.channels
         assert nick in self.usersAPI.channels[data.channel]
-        assert self.usersAPI.getUserModes(data.channel, nick) == [self.usersAPI.REGULAR]
+        assert self.usersAPI.getUserStatus(data.channel, nick) == [self.usersAPI.REGULAR]
 
     def test_that_parted_user_gets_removed_from_channel_userlist(self):
         self.usersAPI.joinEvent(data.event_join)
@@ -39,8 +39,8 @@ class UsersAPITest(unittest.TestCase):
         mode.add('msg', '+o %s' % nick)
         self.usersAPI.modeEvent(mode)
 
-        modes = self.usersAPI.getUserModes(data.channel, nick)
-        assert self.usersAPI.OP in modes
+        status = self.usersAPI.getUserStatus(data.channel, nick)
+        assert self.usersAPI.OP in status 
 
     def test_that_multiple_modes_gets_stored(self):
         nick, ident, host = data.user
@@ -50,9 +50,9 @@ class UsersAPITest(unittest.TestCase):
         mode.add('msg', '+ov %s %s' % (nick, nick))
         self.usersAPI.modeEvent(mode)
 
-        modes = self.usersAPI.getUserModes(data.channel, nick)
-        assert self.usersAPI.OP in modes
-        assert self.usersAPI.VOICE in modes
+        status = self.usersAPI.getUserStatus(data.channel, nick)
+        assert self.usersAPI.OP in status 
+        assert self.usersAPI.VOICE in status 
         
     def test_that_the_same_mode_only_gets_stored_once(self):
         nick, ident, host = data.user
@@ -66,7 +66,26 @@ class UsersAPITest(unittest.TestCase):
         mode.add('msg', '+o %s' % nick)
         self.usersAPI.modeEvent(mode)
 
-        modes = self.usersAPI.getUserModes(data.channel, nick)
-        assert self.usersAPI.OP in modes
-        assert self.usersAPI.REGULAR in modes
-        assert len(modes) == 2 
+        status = self.usersAPI.getUserStatus(data.channel, nick)
+        assert self.usersAPI.OP in status 
+        assert self.usersAPI.REGULAR in status 
+        assert len(status) == 2 
+
+    def test_that_listing_of_names_add_names_to_channel(self):
+        event = data.event_353
+        channel = data.channel
+
+        event.add('msg', '~vz @vx %bo +an &br sm el')
+
+        self.usersAPI.namesEvent(data.event_353)
+        userlist = self.usersAPI.getUserlistFromChannel(channel)
+
+        assert len(userlist) == 7
+
+        assert self.usersAPI.OWNER   in userlist['vz'] and len(userlist['vz']) == 2
+        assert self.usersAPI.ADMIN   in userlist['br'] and len(userlist['br']) == 2
+        assert self.usersAPI.OP      in userlist['vx'] and len(userlist['vx']) == 2
+        assert self.usersAPI.HALFOP  in userlist['bo'] and len(userlist['bo']) == 2
+        assert self.usersAPI.VOICE   in userlist['an'] and len(userlist['an']) == 2
+        assert self.usersAPI.REGULAR in userlist['sm'] and len(userlist['sm']) == 1
+
