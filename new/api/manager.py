@@ -86,6 +86,14 @@ class Manager():
         self.loader.reload(apiPath)
         self.makeSimpleAPI(name)
 
+    def reloadAll(self):
+        '''
+        Reloads all the loaded modules.
+        '''
+        for name in self.modules:
+            if self.isLoaded(name):
+                self.reload(name)
+
     def makeSimpleAPI(self, name):
         '''
         Loads the class of a Brunobot API module, an creates a simple API module
@@ -100,13 +108,6 @@ class Manager():
         apiInstance = apiClass(self.bot)
         self.simpleapi[name] = api.base.SimpleAPI(apiInstance)
 
-    def reloadAll(self):
-        '''
-        Reloads all the loaded modules.
-        '''
-        for name in self.modules:
-            if self.isLoaded(name):
-                self.reload(name)
 
     def getAPIPath(self, name):
         return self.modules[name]

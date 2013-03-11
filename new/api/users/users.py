@@ -165,11 +165,17 @@ class Users(api.base.BrunoAPI):
         Keyword arguments:
         event -- pyric MODE event
         '''
+        print("----", event)
         channel = event.get('channel')
         modes = Users.getModesFromEvent(event.get('msg'))
         for isGiving, status, nick in modes: 
-            if self.channelHasUser(channel, nick):
-                self.changeStatus(channel, isGiving, status, nick)
+            if not self.existsChannel(channel):
+                self.addChannel(channel)
+            
+            if not self.channelHasUser(channel, nick):
+                self.addUserToChannel(channel, nick, self.REGULAR)
+
+            self.changeStatus(channel, isGiving, status, nick)
 
 
     def changeStatus(self, channel, isGiving, status, nick):

@@ -86,6 +86,11 @@ class UsersAPITest(unittest.TestCase):
         assert self.api.VOICE   in userlist['an'] and len(userlist['an']) == 2
         assert self.api.REGULAR in userlist['sm'] and len(userlist['sm']) == 1
 
+    def test_that_mode_event_on_empty_channellist_adds_user(self):
+        mode = data.event_mode
+        mode.add('msg', '+o %s' % 'vz')
+        self.api.modeEvent(mode)
+        assert self.api.channelHasUser(mode.get('channel'), 'vz')
 
     def test_that_hasStatus_returns_stauts_of_nick(self):
         event = data.event_353

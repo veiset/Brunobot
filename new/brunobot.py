@@ -21,4 +21,3 @@ bot = Brunobot()
 bot.irc.connect()
 
 bot.irc.join('#brbot')
-bot.irc.join('#informatikk')
