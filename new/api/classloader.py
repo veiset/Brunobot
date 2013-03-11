@@ -66,5 +66,6 @@ class Loader():
         module = self.get(modulePath)
         for name, obj in inspect.getmembers(module):
             if inspect.isclass(obj):
-                return obj
+                if obj.__module__ == modulePath:
+                    return obj
         
