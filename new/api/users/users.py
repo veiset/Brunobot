@@ -1,5 +1,5 @@
-from api.base import BrunoAPI
-class Users(BrunoAPI):
+import api.base
+class Users(api.base.BrunoAPI):
     ''' 
     Brunobot API: Users
 
