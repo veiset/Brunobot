@@ -40,6 +40,7 @@ class Auth(api.base.BrunoAPI):
         self.api.function(self.add)
         self.api.function(self.remove)
         self.api.function(self.isAuthed)
+        self.api.function(self.getLevel)
         self.api.constants(
             [
                 ('NONE',    self.NONE),
@@ -62,6 +63,14 @@ class Auth(api.base.BrunoAPI):
         self.removeNick(authUser)
         self.removeIdent(authUser)
         self.removeHost(authUser)
+
+    def getLevel(self, nick, ident, host):
+        user = AuthUser(nick, ident, host, self.WILDCARD)
+        if self.hasNick(user): return self.getNick(user).level
+        if self.hasIdent(user): return self.getIdent(user).level
+        if self.hasHost(user): return self.getHost(user).level
+
+        return self.NONE
 
     def isAuthed(self, nick, ident, host, level):
         user = AuthUser(nick, ident, host, level)

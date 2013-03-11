@@ -39,6 +39,7 @@ class Manager():
         name       -- API name
         '''
         self.modules[name] = apiPath
+        self.load(name)
         
     def load(self, name):
         '''
