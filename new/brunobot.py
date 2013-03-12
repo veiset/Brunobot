@@ -4,7 +4,8 @@ import api.manager
 
 class Brunobot():
     def __init__(self):
-        self.irc= irc.Instance('vzbot', 'vz', 'vz', 'irc.homelien.no', 6667)
+        #self.irc= irc.Instance('vzbot', 'vz', 'vz', 'irc.homelien.no', 6667)
+        self.irc= irc.Instance('vzbot', 'vz', 'vz', 'irc.codetalk.io', 6667)
         self.api = api.manager.Manager(self)
         self.api.add('api.auth.auth', 'auth')
         self.api.add('api.users.users', 'users')
@@ -16,8 +17,12 @@ class Brunobot():
         self.module.add('module.urltitle.urltitle', 'urltitle')
         self.module.add('module.status.status', 'status')
 
+        self.irc.addListener('266', self.joinChannels)
+
+    def joinChannels(self, event):
+        self.irc.join('#lobby')
 
 bot = Brunobot()
 bot.irc.connect()
 
-bot.irc.join('#brbot')
+#bot.irc.join('#brbot')
