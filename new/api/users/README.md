@@ -66,7 +66,6 @@ getUserStatus(channel, nick)
 getChannelList
 --------------
 ```python
-```python
 getChannelList(channel)
     '''
     Returns a list of (user, status) from a channel.
@@ -80,29 +79,5 @@ getChannelList(channel)
 
     retrun A list of (user, status)
     '''
-```
-
-Example module
-==============
-```python
-import api.base
-class UserStatus(api.base.BrunoAPI):
-    ''' Resolves a status of a user in a channel'''
-
-    def __init__(self, brunobot):
-        super().__init__(brunobot)
-        self.users = self.bot.api.get('users')
-
-        self.addListener("cmd.status", self.status)
-
-    def status(self, event):
-        nick, ident, host = event.get('user')
-        channel = event.get('channel')
-        chanStatus = self.users().getUserStatus(channel, nick)
-
-        if chanStatus == self.users().OP:
-            self.bot.irc.say(channel, 'You got the power!'))
-        else:
-            self.bot.irc.say(channel, 'Insufficient')
 ```
 
