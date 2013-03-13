@@ -30,13 +30,29 @@ class BrunoAPI:
     def unload(self):
         for event, fun in self.listeners:
             self.remListener(event, fun)
-        self.api = self.API() # empty API environment
+        
+    def getEnvironment(self):
+        return [(var, self.getVariableValue(var)) for var in self.getVariables()]
+
+    def getVariables(self):
+        return [attr for attr in dir(self) 
+                   if self.isVariable(attr) and not self.isDefaultVariable(attr)]
+
+    def isVariable(self, attr):
+        return not (callable(self.getVariableValue(attr)) or attr.startswith('__'))
+
+    def isDefaultVariable(self, attr):
+        return attr in ['api', 'bot', 'listeners']
+
+    def getVariableValue(self, var):
+        return self.__getattribute__(var)
 
 
     class API:
         def __init__(self):
             self.fun = []
             self.const = []
+            self.presist = []
 
         def function(self, fun):
             ''' 
@@ -59,6 +75,7 @@ class BrunoAPI:
         def constants(self, varset):
             for name, value in varset:
                 self.constant(name, value)
+
 
 class SimpleAPI():
     

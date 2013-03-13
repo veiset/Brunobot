@@ -1,23 +1,7 @@
-import modulemanager
+from pyric import irc
+bot = irc.Instance('vzbot', 'vz', 'vz', 'irc.homelien.no', 6667)
 
-import time
+bot.connect()
 
-class Brunobot():
-    def __init__(self):
-        self.modules = modulemanager.ModuleManager()
-
-        self.connection = self.modules.core('connection')
-        self.communication = self.modules.core('communication')
-        self.parser = self.modules.core('parser')
-
-        self.connection.connect()
-
-brunobot = Brunobot()
-
-
-# Enabling the bot to be quitted by ^C (control-c)
-while brunobot.modules.enabled:
-    try:
-        time.sleep(0.3)
-    except KeyboardInterrupt:
-        brunobot.modules.quit()
+bot.join('#brbot')
+bot.join('#informatikk')
