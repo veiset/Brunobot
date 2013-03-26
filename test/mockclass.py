@@ -1,6 +1,8 @@
+import api.base
+
 var = 'default' 
 
-class MockClass():
+class MockClass(api.base.BrunoAPI):
     def __init__(self):
         self.value = 'value'
 

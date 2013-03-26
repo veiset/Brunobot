@@ -66,6 +66,6 @@ class Loader():
         module = self.get(modulePath)
         for name, obj in inspect.getmembers(module):
             if inspect.isclass(obj):
-                if obj.__module__ == modulePath:
+                if 'BrunoAPI' in [c.__qualname__ for c in inspect.getmro(obj)]:
                     return obj
         
