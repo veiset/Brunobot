@@ -15,14 +15,17 @@ class Recorder(api.base.BrunoAPI):
 
         self.api.function(self.add)
 
+
     def record(self, logfile):
         print("Starting to record.")
+
 
     def playback(self, logfile):
         with open(logfile, 'r') as log:
             for event in log:
                 e = events.Event(ast.literal_eval(event))
                 self.bot.irc.event(e)
+
 
     def writeEvent(self, logfile, event):
         with open(logfile, 'a') as log:
