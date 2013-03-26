@@ -58,10 +58,14 @@ class Loader():
 
     def getClass(self, modulePath):
         '''
-        Returns the first defined class of a module.
+        Returns the first defined class of a BrunoAPI module.
 
         Keyword arguments:
-        moduelPath -- module path (e.g: test.mockapi)
+        moduelPath -- module path (e.g: api.auth.auth)
+
+        >>> c = getClass('api.auth.auth')
+        >>> instanceOfClass = c()
+        >>> instanceOfClass.classMethod()
         '''
         module = self.get(modulePath)
         for name, obj in inspect.getmembers(module):
