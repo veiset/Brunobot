@@ -7,10 +7,19 @@ import api.base
 class Calc(api.base.BrunoAPI):
     ''' Module for doing simple math operations '''
 
+    LEGAL = ['acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 'ceil', 
+             'copysign', 'cos', 'cosh', 'degrees', 'e', 'erf', 'erfc', 'exp',
+             'expm1', 'fabs', 'factorial', 'floor', 'fmod', 'frexp', 'fsum', 
+             'gamma', 'hypot', 'isfinite', 'isinf', 'isnan', 'ldexp', 'lgamma', 
+             'log', 'log10', 'log1p', 'log2', 'modf', 'pi', 'pow', 'radians', 
+             'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'trunc', 
+             'max', 'min']
+
     def __init__(self, brunobot):
         super().__init__(brunobot)
 
         self.addListener("cmd.calc", self.calc)
+        self.addListener("cmd.calc.help", self.helpdoc)
 
     def calc(self, event):
         ''' Calculates a given expression '''
@@ -23,26 +32,38 @@ class Calc(api.base.BrunoAPI):
             self.bot.irc.say(event.get('channel'), 'Result: Illegal expr.')
 
 
+    def helpdoc(self, event):
+        ''' Returns docstring of a function '''
+        param = event.get('param')
+        functions = Calc.Visitor().visit(ast.parse(param))
+
+        if len(functions) == 1:
+            function = functions[0]
+            doc = self.docstring(function)
+
+            self.bot.irc.say(event.get('channel'), '%s: %s' % (function, doc))
+
+
+    def docstring(self, function):
+        if function in self.LEGAL:
+            return eval(function).__doc__
+        return "Illegal / No such function."
+
     def legalExpression(self, expr):
         '''
         legalExpression(string) -> true/false
 
-        Checks an expression against the functions in pythons math
-        library and returns the expression if all variables
-        in the expression are functions in python.math. 
-
-        Will return the 'func.__doc__' if not parameters to
-        the function is given.
+        Checks if a string is a legal python math expression.
 
         Keyword arguments:
         expr -- mathematical expression
 
-        Return the expression if it is valid, false otherwise
+        Return true if valid, false otherwise
         '''
         try:
             functions = Calc.Visitor().visit(ast.parse(expr.lower()))
-            for f in functions:
-                if not self.isMathExpr(f):
+            for e in functions:
+                if e not in self.LEGAL:
                     return False
         except:
             return False 
