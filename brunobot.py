@@ -19,6 +19,7 @@ class Brunobot():
         self.module.add('module.urltitle.urltitle', 'urltitle')
         self.module.add('module.status.status', 'status')
         self.module.add('module.ppoker.planningpoker', 'ppoker')
+        self.module.add('module.calc.calc', 'calc')
 
         self.irc.addListener('266', self.joinChannels)
 
