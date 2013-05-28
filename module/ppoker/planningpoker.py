@@ -18,16 +18,10 @@ class PlanningPoker(api.base.BrunoAPI):
 
         def hasUser(self, user): return user in self.users
         def getUserVote(self, user): return self.users[user]
-        def addUserVote(self, user, weight): self.users[user] = weight
+        def addUserVote(self, user, weight): self.users[user] = user + ": " + str(weight)
 
         def getVotes(self):
             return [weight for weight in self.users.values()]
-
-        def getAverage(self):
-            if len(self.users) == 0:
-                return 0
-
-            return sum(self.getVotes())/len(self.users)
 
     def __init__(self, brunobot):
         super().__init__(brunobot)
@@ -39,20 +33,20 @@ class PlanningPoker(api.base.BrunoAPI):
         self.addListener("cmd.pp.status", self.status)
         self.addListener("cmd.pp.agree", self.agree)
         self.addListener("privmsg", self.addVote)
+        self.addListener("cmd.pp.who", self.who)
+        self.addListener("cmd.pp.force", self.force)
 
     def doneVoting(self, issueId):
         issue = self.issues[issueId]
 
-        avg = issue.users.getAverage()
         votes = issue.users.getVotes()
 
         issue.users = PlanningPoker.Users()
         self.bot.irc.say(
             issue.channel, 
-            'Done voting on issue %s (%s), average vote: %s, votes: %s.' % (
+            'Done voting on issue %s (%s), votes: %s.' % (
                 issueId,
                 issue.text,
-                avg,
                 votes
             )
         )
@@ -81,6 +75,10 @@ class PlanningPoker(api.base.BrunoAPI):
                         if issue.getCurrentVotes() == issue.needed:
                             self.doneVoting(issueId)
 
+    def force(self, event):
+        param = event.get('param')
+        issueId = int(param)
+        self.doneVoting(issueId)
 
     def status(self, event):
         param = event.get('param')
@@ -94,6 +92,22 @@ class PlanningPoker(api.base.BrunoAPI):
                 issue.text,
                 issue.getCurrentVotes(),
                 issue.needed
+            )
+        )
+
+    def who(self, event):
+        param = event.get('param')
+        issueId = int(param)
+        issue = self.issues[issueId]
+        votes = issue.users.getVotes()
+
+        users = [ vote.split(': ')[0] for vote in votes ]
+
+        self.bot.irc.say(
+            event.get('channel'),
+            'The following people have voted for issue %s: %s' % (
+            issueId,
+            users
             )
         )
 

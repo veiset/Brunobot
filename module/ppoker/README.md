@@ -13,6 +13,14 @@ Current status of an issue:
 ```
 .pp.status <issueID>
 ```
+View who has voted on the current issue:
+```
+.pp.who <issueID>
+```
+Force a vote to end, in case someone has been AFK too long:
+```
+.pp.force <issueID>
+```
 
 Example module usage (IRC scenario):
 ```
